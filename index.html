@@ -2384,17 +2384,42 @@ async function downloadCardAsPng() {
     ctx.fillText(wmText, wmX + wmW / 2, wmY + wmH * 0.65)
   }
 
-  // ── Trigger download ──
-  canvas.toBlob((blob) => {
+  // ── Export PNG: prefer Web Share API on mobile (saves to Photos),
+  //    fall back to download link on desktop.
+  canvas.toBlob(async (blob) => {
+    if (!blob) { showToast('生成失敗，請再試一次'); return }
+    const date     = new Date().toISOString().slice(0,10)
+    const filename = `her-aurora-${card.id}-${currentFormat}-${date}.png`
+    const file     = new File([blob], filename, { type: 'image/png' })
+
+    // ── Path A: Web Share API with files (iOS Safari, Android Chrome) ──
+    // navigator.canShare detects if the device supports sharing files —
+    // user sees the native share sheet with "Save Image" → Photos.
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      try {
+        await navigator.share({
+          files: [file],
+          title: 'Her Aurora Card',
+          text:  '✦ ' + card.title,
+        })
+        showToast('✦ 已開啟分享面板')
+        return
+      } catch (err) {
+        // User cancelled share sheet — that's fine, fall through to download
+        if (err.name === 'AbortError') return
+        console.warn('Share failed, falling back to download:', err)
+      }
+    }
+
+    // ── Path B: Desktop browsers — trigger file download ──
     const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    const date = new Date().toISOString().slice(0,10)
+    const a   = document.createElement('a')
     a.href = url
-    a.download = `her-aurora-${card.id}-${currentFormat}-${date}.png`
+    a.download = filename
     document.body.appendChild(a)
     a.click()
     document.body.removeChild(a)
-    URL.revokeObjectURL(url)
+    setTimeout(() => URL.revokeObjectURL(url), 1000)
     showToast('✦ 圖卡已下載到本機')
   }, 'image/png', 1.0)
 }
