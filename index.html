@@ -1,0 +1,2577 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Her Aurora Card · 每日金句抽卡</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=DM+Mono:wght@400;500&family=Noto+Sans+TC:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+/* ── Aurora Palette ──────────────────────────────────────────────────────────── */
+:root {
+  --deep-ocean:   #0D2733;
+  --navy-dusk:    #2E3F6E;
+  --violet:       #7B4F9E;
+  --aurora-pink:  #C45C9B;
+  --coral:        #F26B6B;
+  --sunset:       #F4874B;
+  --gold:         #F5A623;
+  --warm-glow:    #FDD08A;
+
+  --text-light:   #FEFCF8;
+  --text-dim:     rgba(255,255,255,0.65);
+  --text-muted:   rgba(255,255,255,0.38);
+  --card-glass:   rgba(255,255,255,0.07);
+  --card-border:  rgba(255,255,255,0.12);
+
+  --grad-aurora: linear-gradient(135deg,
+    #0D2733 0%, #2E3F6E 28%, #7B4F9E 52%,
+    #C45C9B 68%, #F26B6B 82%, #F5A623 100%);
+
+  --grad-card-rose:   linear-gradient(145deg, #C45C9B22, #F26B6B18);
+  --grad-card-violet: linear-gradient(145deg, #7B4F9E22, #C45C9B18);
+  --grad-card-gold:   linear-gradient(145deg, #F5A62322, #FDD08A18);
+  --grad-card-ocean:  linear-gradient(145deg, #2E3F6E22, #7B4F9E18);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Noto Sans TC', sans-serif;
+  background: var(--deep-ocean);
+  color: var(--text-light);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── Aurora background ───────────────────────────────────────────────────────── */
+.aurora-bg {
+  position: fixed; inset: 0; z-index: 0;
+  background: var(--deep-ocean);
+  overflow: hidden;
+}
+.aurora-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.35;
+  animation: drift 12s ease-in-out infinite alternate;
+}
+.orb1 { width: 520px; height: 520px; top: -120px; left: -80px;
+        background: radial-gradient(circle, #7B4F9E, transparent);
+        animation-delay: 0s; }
+.orb2 { width: 400px; height: 400px; top: 30%; right: -100px;
+        background: radial-gradient(circle, #C45C9B, transparent);
+        animation-delay: -3s; }
+.orb3 { width: 480px; height: 480px; bottom: -100px; left: 25%;
+        background: radial-gradient(circle, #F26B6B, transparent);
+        animation-delay: -6s; }
+.orb4 { width: 300px; height: 300px; top: 60%; left: -60px;
+        background: radial-gradient(circle, #2E3F6E, transparent);
+        animation-delay: -9s; }
+
+@keyframes drift {
+  from { transform: translate(0, 0) scale(1); }
+  to   { transform: translate(40px, 30px) scale(1.08); }
+}
+
+/* ── Layout ──────────────────────────────────────────────────────────────────── */
+.app { position: relative; z-index: 1; min-height: 100vh; display: flex; flex-direction: column; }
+
+/* ── Header ──────────────────────────────────────────────────────────────────── */
+.header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 20px 24px 16px;
+  border-bottom: 0.5px solid var(--card-border);
+  backdrop-filter: blur(12px);
+  background: rgba(13, 39, 51, 0.6);
+  position: sticky; top: 0; z-index: 50;
+}
+.brand {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px; font-weight: 400; letter-spacing: 1.6px;
+  background: linear-gradient(90deg, var(--aurora-pink), var(--warm-glow));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+.streak-badge {
+  display: flex; align-items: center; gap: 6px;
+  background: rgba(245,166,35,0.15);
+  border: 0.5px solid rgba(245,166,35,0.35);
+  border-radius: 20px; padding: 5px 12px;
+  font-family: 'DM Mono', monospace; font-size: 11px; color: var(--warm-glow);
+}
+
+/* ── Tab bar ─────────────────────────────────────────────────────────────────── */
+.tabs {
+  display: flex; gap: 2px; padding: 12px 16px 0;
+  border-bottom: 0.5px solid var(--card-border);
+}
+.tab {
+  padding: 9px 18px; border-radius: 8px 8px 0 0;
+  font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.08em;
+  color: var(--text-muted); cursor: pointer; border: none;
+  background: transparent; transition: all .2s; text-transform: uppercase;
+}
+.tab:hover { color: var(--text-dim); background: var(--card-glass); }
+.tab.active {
+  color: var(--warm-glow);
+  background: rgba(253,208,138,0.1);
+  border-bottom: 1.5px solid var(--warm-glow);
+}
+
+/* ── Pages ───────────────────────────────────────────────────────────────────── */
+.page { display: none; flex: 1; padding: 24px 16px 48px; }
+.page.active { display: block; }
+
+/* ── Section titles ──────────────────────────────────────────────────────────── */
+.section-eyebrow {
+  font-family: 'DM Mono', monospace; font-size: 10px;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--aurora-pink); margin-bottom: 8px;
+}
+.section-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 26px; font-weight: 400; color: var(--text-light);
+  margin-bottom: 20px; line-height: 1.25;
+}
+
+/* ── Daily card CTA ──────────────────────────────────────────────────────────── */
+.daily-cta {
+  background: var(--card-glass);
+  border: 0.5px solid var(--card-border);
+  border-radius: 20px; padding: 28px;
+  display: flex; flex-direction: column; gap: 14px;
+  margin-bottom: 28px; cursor: pointer;
+  transition: transform .2s, background .2s;
+  position: relative; overflow: hidden;
+}
+.daily-cta::before {
+  content: ''; position: absolute; inset: 0;
+  background: var(--grad-aurora); opacity: 0.06;
+  transition: opacity .3s;
+}
+.daily-cta:hover { transform: translateY(-2px); }
+.daily-cta:hover::before { opacity: 0.12; }
+.cta-label {
+  font-family: 'DM Mono', monospace; font-size: 10px;
+  letter-spacing: 0.16em; text-transform: uppercase; color: var(--aurora-pink);
+}
+.cta-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 28px; font-weight: 400; font-style: italic;
+  line-height: 1.35; color: var(--text-light);
+}
+.cta-arrow {
+  font-size: 13px; color: var(--gold); font-weight: 500;
+  font-family: 'DM Mono', monospace;
+}
+
+/* ── Theme chips ─────────────────────────────────────────────────────────────── */
+.theme-grid { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 28px; }
+.theme-chip {
+  display: flex; align-items: center; gap: 7px;
+  padding: 8px 16px; border-radius: 40px;
+  border: 0.5px solid var(--card-border);
+  background: var(--card-glass);
+  font-size: 13px; color: var(--text-dim);
+  cursor: pointer; transition: all .2s; white-space: nowrap;
+}
+.theme-chip:hover, .theme-chip.active {
+  border-color: var(--aurora-pink);
+  background: rgba(196,92,155,0.15);
+  color: var(--text-light);
+}
+
+/* ── Main card ───────────────────────────────────────────────────────────────── */
+.card-container {
+  display: flex; justify-content: center;
+  margin-bottom: 24px;
+}
+.aurora-card {
+  width: 100%; max-width: 400px;
+  border-radius: 24px; overflow: hidden;
+  position: relative;
+  border: 0.5px solid var(--card-border);
+  transition: transform .35s cubic-bezier(.34,1.56,.64,1);
+}
+.aurora-card.flip-in {
+  animation: cardFlip .42s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes cardFlip {
+  0%   { transform: scale(0.88) rotateY(8deg); opacity: 0; }
+  60%  { transform: scale(1.02) rotateY(-2deg); opacity: 1; }
+  100% { transform: scale(1) rotateY(0deg); }
+}
+.card-bg {
+  position: absolute; inset: 0;
+  transition: opacity .4s;
+}
+.card-inner {
+  position: relative; z-index: 1;
+  padding: 28px 26px 24px;
+  display: flex; flex-direction: column; gap: 16px;
+  min-height: 420px; justify-content: center;
+}
+.card-theme-label {
+  display: flex; align-items: center; gap: 7px;
+  font-family: 'DM Mono', monospace; font-size: 10px;
+  letter-spacing: 0.18em; text-transform: uppercase;
+}
+.card-divider { width: 36px; height: 1px; }
+.card-title-sm {
+  font-size: 12px; color: rgba(255,255,255,0.52);
+  letter-spacing: 0.4px;
+}
+.card-quote {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px; font-style: italic; font-weight: 400;
+  line-height: 1.6; color: var(--text-light);
+}
+.card-reminder {
+  font-size: 13px; color: var(--text-dim);
+  line-height: 1.78;
+}
+.card-reflection {
+  border-radius: 10px; padding: 12px 14px;
+  background: rgba(255,255,255,0.08);
+  border: 0.5px solid rgba(255,255,255,0.12);
+}
+.card-reflection-label {
+  font-family: 'DM Mono', monospace; font-size: 9px;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  margin-bottom: 5px;
+}
+.card-reflection-text {
+  font-size: 12px; font-style: italic;
+  color: rgba(255,255,255,0.75); line-height: 1.65;
+}
+.card-footer {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-top: 4px;
+}
+.card-author { font-size: 11px; color: rgba(255,255,255,0.35); }
+.card-brand {
+  font-family: 'DM Mono', monospace; font-size: 10px;
+  letter-spacing: 0.12em; color: var(--aurora-pink); opacity: 0.8;
+}
+
+/* Per-theme card backgrounds */
+.bg-rose   { background: linear-gradient(150deg, #7B4F9E 0%, #C45C9B 50%, #F26B6B 100%); }
+.bg-gold   { background: linear-gradient(150deg, #C45C9B 0%, #F4874B 55%, #F5A623 100%); }
+.bg-mist   { background: linear-gradient(150deg, #0D2733 0%, #2E3F6E 55%, #7B4F9E 100%); }
+.bg-aurora { background: linear-gradient(150deg, #2E3F6E 0%, #7B4F9E 45%, #C45C9B 100%); }
+
+/* ── Action bar ──────────────────────────────────────────────────────────────── */
+.action-bar {
+  display: flex; gap: 10px; max-width: 400px;
+  margin: 0 auto 20px;
+}
+.btn {
+  flex: 1; display: flex; align-items: center; justify-content: center; gap: 7px;
+  padding: 13px 16px; border-radius: 12px;
+  font-size: 13px; font-weight: 500;
+  cursor: pointer; border: none; transition: all .18s; font-family: inherit;
+}
+.btn-ghost {
+  background: var(--card-glass);
+  border: 0.5px solid var(--card-border);
+  color: var(--text-dim);
+}
+.btn-ghost:hover { background: rgba(255,255,255,0.1); color: var(--text-light); }
+.btn-ghost.favorited { border-color: var(--aurora-pink); color: var(--aurora-pink); background: rgba(196,92,155,0.12); }
+.btn-primary {
+  flex: 2;
+  background: linear-gradient(90deg, var(--aurora-pink), var(--coral));
+  color: #fff;
+}
+.btn-primary:hover { opacity: 0.88; transform: translateY(-1px); }
+
+/* ── Draw button ─────────────────────────────────────────────────────────────── */
+.draw-btn {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  width: 100%; max-width: 400px; margin: 0 auto 20px;
+  padding: 17px 24px; border-radius: 14px;
+  background: linear-gradient(90deg, var(--violet), var(--aurora-pink), var(--coral));
+  color: #fff; font-size: 15px; font-weight: 500;
+  border: none; cursor: pointer;
+  transition: opacity .18s, transform .18s;
+  font-family: inherit; letter-spacing: 0.4px;
+  position: relative; overflow: hidden;
+}
+.draw-btn::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+  transform: translateX(-100%); transition: transform .5s;
+}
+.draw-btn:hover::after { transform: translateX(100%); }
+.draw-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+.draw-btn:active { transform: scale(0.98); }
+
+/* ── Theme list (themes page) ────────────────────────────────────────────────── */
+.theme-list { display: flex; flex-direction: column; gap: 10px; }
+.theme-row {
+  display: flex; align-items: center; gap: 14px;
+  background: var(--card-glass); border: 0.5px solid var(--card-border);
+  border-radius: 14px; padding: 14px 18px;
+  cursor: pointer; transition: all .2s; overflow: hidden;
+  position: relative;
+}
+.theme-row::before {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+  width: 3px;
+}
+.theme-row:hover { transform: translateX(4px); border-color: rgba(255,255,255,0.2); }
+.theme-emoji-circle {
+  width: 44px; height: 44px; border-radius: 22px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; flex-shrink: 0;
+}
+.theme-row-info { flex: 1; }
+.theme-row-name { font-size: 15px; font-weight: 500; color: var(--text-light); }
+.theme-row-count { font-size: 11px; color: var(--text-muted); margin-top: 3px; font-family: 'DM Mono', monospace; }
+.theme-row-arrow { font-size: 18px; color: var(--text-muted); }
+.theme-row-count-badge {
+  padding: 2px 10px; border-radius: 10px;
+  font-family: 'DM Mono', monospace; font-size: 10px;
+}
+
+/* ── Collection page ─────────────────────────────────────────────────────────── */
+.collection-header {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  margin-bottom: 16px;
+}
+.sort-btn {
+  background: var(--card-glass); border: 0.5px solid var(--card-border);
+  border-radius: 20px; padding: 6px 14px;
+  font-family: 'DM Mono', monospace; font-size: 10px;
+  color: var(--text-dim); cursor: pointer; white-space: nowrap;
+}
+.usage-bar { margin-bottom: 16px; }
+.usage-track { height: 3px; background: rgba(255,255,255,0.12); border-radius: 2px; overflow: hidden; display: flex; }
+.usage-fill { height: 3px; border-radius: 2px; background: linear-gradient(90deg, var(--aurora-pink), var(--gold)); }
+.usage-label { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text-muted); margin-top: 5px; }
+.filter-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+.filter-chip {
+  padding: 5px 13px; border-radius: 20px;
+  font-size: 12px; border: 0.5px solid var(--card-border);
+  background: var(--card-glass); color: var(--text-muted);
+  cursor: pointer; transition: all .18s; white-space: nowrap;
+}
+.filter-chip.active {
+  background: rgba(196,92,155,0.18); border-color: var(--aurora-pink);
+  color: var(--text-light);
+}
+.card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.mini-card {
+  border-radius: 14px; overflow: hidden;
+  aspect-ratio: 0.82; padding: 14px; display: flex; flex-direction: column; gap: 8px;
+  position: relative; cursor: pointer; transition: transform .2s;
+  border: 0.5px solid rgba(255,255,255,0.1);
+}
+.mini-card:hover { transform: translateY(-3px); }
+.mini-card-theme {
+  font-family: 'DM Mono', monospace; font-size: 9px;
+  letter-spacing: 0.12em; text-transform: uppercase; opacity: 0.75;
+}
+.mini-card-quote {
+  font-size: 12px; font-style: italic; line-height: 1.55;
+  color: rgba(255,255,255,0.85); flex: 1;
+  font-family: 'Cormorant Garamond', serif;
+}
+.mini-card-title { font-size: 10px; color: rgba(255,255,255,0.45); font-weight: 500; }
+.mini-card-remove {
+  position: absolute; top: 8px; right: 8px;
+  width: 22px; height: 22px; border-radius: 11px;
+  background: rgba(0,0,0,0.35); border: none;
+  font-size: 11px; color: rgba(255,255,255,0.5);
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: background .18s; line-height: 1;
+}
+.mini-card-remove:hover { background: rgba(242,107,107,0.6); color: #fff; }
+.empty-state {
+  text-align: center; padding: 60px 24px; display: flex; flex-direction: column;
+  align-items: center; gap: 14px;
+}
+.empty-emoji { font-size: 48px; }
+.empty-title { font-family: 'Cormorant Garamond', serif; font-size: 22px; color: var(--text-dim); }
+.empty-desc { font-size: 13px; color: var(--text-muted); line-height: 1.75; max-width: 260px; text-align: center; }
+
+/* ── Share page ──────────────────────────────────────────────────────────────── */
+.share-preview-box {
+  max-width: 340px; margin: 0 auto 20px;
+  border-radius: 20px; overflow: hidden;
+  border: 0.5px solid var(--card-border);
+  position: relative;
+}
+
+.format-selector { display: flex; gap: 10px; margin-bottom: 18px; }
+.format-opt {
+  flex: 1; background: var(--card-glass); border: 0.5px solid var(--card-border);
+  border-radius: 12px; padding: 12px; cursor: pointer; transition: all .18s;
+  display: flex; align-items: center; gap: 10px;
+}
+.format-opt:hover { border-color: rgba(255,255,255,0.25); }
+.format-opt.active { border-color: var(--aurora-pink); background: rgba(196,92,155,0.12); }
+.format-opt-icon { font-size: 20px; }
+.format-opt-info {}
+.format-opt-name { font-size: 13px; font-weight: 500; color: var(--text-light); }
+.format-opt-size { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--text-muted); }
+.format-check {
+  margin-left: auto; width: 18px; height: 18px; border-radius: 9px;
+  background: var(--aurora-pink); display: none;
+  align-items: center; justify-content: center; font-size: 9px; color: #fff;
+}
+.format-opt.active .format-check { display: flex; }
+.watermark-row {
+  display: flex; align-items: center; justify-content: space-between;
+  background: var(--card-glass); border: 0.5px solid var(--card-border);
+  border-radius: 12px; padding: 14px 16px; margin-bottom: 16px;
+}
+.watermark-info {}
+.watermark-title { font-size: 13px; font-weight: 500; color: var(--text-light); }
+.watermark-sub { font-size: 11px; color: var(--text-muted); margin-top: 3px; }
+.toggle {
+  width: 44px; height: 26px; border-radius: 13px;
+  background: rgba(255,255,255,0.15); border: none; cursor: pointer;
+  position: relative; transition: background .2s; flex-shrink: 0;
+}
+.toggle.on { background: var(--aurora-pink); }
+.toggle-thumb {
+  position: absolute; top: 3px; left: 3px;
+  width: 20px; height: 20px; border-radius: 10px; background: #fff;
+  transition: transform .2s;
+}
+.toggle.on .toggle-thumb { transform: translateX(18px); }
+.share-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.share-btn {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--card-glass); border: 0.5px solid var(--card-border);
+  border-radius: 12px; padding: 14px 16px; cursor: pointer;
+  transition: all .18s; font-family: inherit;
+}
+.share-btn:hover { border-color: rgba(255,255,255,0.3); background: rgba(255,255,255,0.1); }
+.share-btn:first-child {
+  grid-column: 1 / -1;
+  background: linear-gradient(90deg, rgba(196,92,155,0.2), rgba(242,107,107,0.2));
+  border-color: rgba(196,92,155,0.4);
+}
+.share-btn-emoji { font-size: 20px; }
+.share-btn-info {}
+.share-btn-label { font-size: 13px; font-weight: 500; color: var(--text-light); }
+.share-btn-sub { font-size: 11px; color: var(--text-muted); }
+
+/* ── Classroom page ──────────────────────────────────────────────────────────── */
+.classroom-landing {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 20px; padding: 20px 0; text-align: center;
+}
+.classroom-icon { font-size: 56px; }
+.classroom-features {
+  width: 100%; max-width: 400px;
+  background: var(--card-glass); border: 0.5px solid var(--card-border);
+  border-radius: 16px; padding: 18px; display: flex; flex-direction: column; gap: 12px;
+}
+.feature-row { display: flex; align-items: center; gap: 12px; }
+.feature-icon { font-size: 18px; width: 26px; text-align: center; flex-shrink: 0; }
+.feature-text { font-size: 13px; color: var(--text-dim); line-height: 1.5; }
+
+/* ── Classroom active mode ───────────────────────────────────────────────────── */
+#classroom-mode {
+  display: none;
+  position: fixed; inset: 0; z-index: 200;
+  background: var(--deep-ocean);
+  flex-direction: column;
+}
+#classroom-mode.active { display: flex; }
+.cm-top {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 20px; background: rgba(0,0,0,0.4);
+}
+.cm-theme { display: flex; align-items: center; gap: 8px; }
+.cm-theme-emoji { font-size: 18px; }
+.cm-theme-label { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text-dim); letter-spacing: 0.12em; text-transform: uppercase; }
+.cm-timer-btn {
+  padding: 5px 14px; border-radius: 20px;
+  border: 0.5px solid rgba(255,255,255,0.2);
+  background: transparent; color: var(--text-dim);
+  font-family: 'DM Mono', monospace; font-size: 12px;
+  cursor: pointer; transition: all .18s; font-variant-numeric: tabular-nums;
+}
+.cm-timer-btn.running { border-color: var(--gold); color: var(--warm-glow); background: rgba(245,166,35,0.1); }
+.cm-end-btn {
+  padding: 5px 14px; border-radius: 20px;
+  border: 0.5px solid rgba(196,92,155,0.4);
+  background: transparent; color: var(--aurora-pink);
+  font-size: 12px; cursor: pointer; font-family: inherit;
+}
+.cm-body { flex: 1; display: flex; align-items: center; justify-content: center; padding: 20px; }
+.cm-card {
+  width: 100%; max-width: 480px;
+  background: var(--card-glass); border: 0.5px solid var(--card-border);
+  border-radius: 24px; padding: 32px 28px;
+  display: flex; flex-direction: column; gap: 18px;
+  position: relative; overflow: hidden;
+  animation: cmCardIn .38s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes cmCardIn {
+  from { opacity: 0; transform: translateY(20px) scale(0.95); }
+  to   { opacity: 1; transform: none; }
+}
+.cm-card::before {
+  content: ''; position: absolute; inset: 0;
+  background: var(--grad-aurora); opacity: 0.06;
+}
+.cm-progress {
+  display: flex; justify-content: center; gap: 5px; flex-wrap: wrap;
+}
+.cm-dot {
+  width: 6px; height: 6px; border-radius: 3px;
+  background: rgba(255,255,255,0.18); transition: all .2s;
+}
+.cm-dot.done { background: rgba(255,255,255,0.42); }
+.cm-dot.current { background: var(--aurora-pink); width: 18px; }
+.cm-theme-label-card { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; opacity: 0.7; }
+.cm-divider { width: 40px; height: 1px; }
+.cm-card-title { font-size: 12px; color: rgba(255,255,255,0.45); }
+.cm-quote {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(20px, 4vw, 26px); font-style: italic; font-weight: 300;
+  line-height: 1.55; color: var(--text-light);
+}
+.cm-reminder { font-size: 13px; color: var(--text-dim); line-height: 1.8; }
+.cm-reflection {
+  border-radius: 12px; padding: 14px;
+  border: 0.5px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.05);
+}
+.cm-reflection-label { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.14em; margin-bottom: 6px; }
+.cm-reflection-text { font-size: 13px; font-style: italic; color: rgba(255,255,255,0.72); line-height: 1.65; }
+.cm-footer-row { display: flex; justify-content: space-between; align-items: center; }
+.cm-author { font-size: 11px; color: rgba(255,255,255,0.3); }
+.cm-brand { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--aurora-pink); opacity: 0.6; letter-spacing: 0.1em; }
+.cm-bottom {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 20px; background: rgba(0,0,0,0.4); gap: 12px;
+}
+.cm-nav-btn {
+  padding: 10px 20px; border-radius: 10px;
+  border: 0.5px solid rgba(255,255,255,0.18);
+  background: transparent; color: var(--text-dim);
+  font-size: 13px; cursor: pointer; transition: all .18s;
+  min-width: 90px; font-family: inherit;
+}
+.cm-nav-btn:disabled { opacity: 0.28; cursor: default; }
+.cm-nav-btn:not(:disabled):hover { border-color: rgba(255,255,255,0.35); color: var(--text-light); }
+.cm-nav-btn.primary {
+  background: linear-gradient(90deg, var(--aurora-pink), var(--coral));
+  border-color: transparent; color: #fff;
+}
+.cm-nav-btn.primary:hover { opacity: 0.88; }
+.cm-center-info { flex: 1; text-align: center; }
+.cm-count { font-family: 'DM Mono', monospace; font-size: 13px; color: var(--text-dim); }
+.cm-hint { font-size: 10px; color: rgba(255,255,255,0.22); margin-top: 2px; }
+
+/* ── Toast ───────────────────────────────────────────────────────────────────── */
+.toast {
+  position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%);
+  background: rgba(13,39,51,0.92); backdrop-filter: blur(12px);
+  border: 0.5px solid var(--card-border); border-radius: 30px;
+  padding: 10px 22px; font-size: 13px; color: var(--text-light);
+  z-index: 999; pointer-events: none;
+  opacity: 0; transition: opacity .2s;
+  white-space: nowrap;
+}
+.toast.show { opacity: 1; }
+
+/* ── Classroom Setup Modal ───────────────────────────────────────────────────── */
+.modal-backdrop {
+  display: none; position: fixed; inset: 0; z-index: 150;
+  background: rgba(0,0,0,0.55); align-items: flex-end;
+}
+.modal-backdrop.active { display: flex; }
+.modal-sheet {
+  width: 100%; max-width: 540px; margin: 0 auto;
+  background: #111E26; border-radius: 24px 24px 0 0;
+  padding: 16px 20px 40px;
+  border: 0.5px solid var(--card-border);
+  border-bottom: none; max-height: 85vh; overflow-y: auto;
+  animation: slideUp .3s cubic-bezier(.16,1,.3,1);
+}
+@keyframes slideUp { from { transform: translateY(100%); } to { transform: none; } }
+.modal-handle { width: 36px; height: 4px; border-radius: 2px; background: rgba(255,255,255,0.2); margin: 0 auto 16px; }
+.modal-title { font-family: 'Cormorant Garamond', serif; font-size: 26px; color: var(--text-light); margin-bottom: 6px; line-height: 1.2; }
+.modal-sub { font-size: 14px; color: var(--text-muted); margin-bottom: 22px; line-height: 1.5; }
+.setup-theme-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; max-height: 50vh; overflow-y: auto; padding-right: 4px; }
+.setup-theme-row {
+  display: flex; align-items: center; gap: 16px;
+  background: var(--card-glass); border: 0.5px solid var(--card-border);
+  border-radius: 14px; padding: 18px 20px; cursor: pointer; transition: all .18s;
+  overflow: hidden; position: relative; min-height: 76px;
+}
+.setup-theme-row::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; }
+.setup-theme-row.selected { border-color: var(--aurora-pink); background: rgba(196,92,155,0.12); }
+.setup-emoji-circle { width: 48px; height: 48px; border-radius: 24px; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
+.setup-row-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+.setup-row-name { font-size: 16px; font-weight: 500; color: var(--text-light); line-height: 1.3; }
+.setup-row-count { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text-muted); letter-spacing: 0.04em; }
+.setup-check { width: 24px; height: 24px; border-radius: 12px; background: var(--aurora-pink); display: none; align-items: center; justify-content: center; font-size: 12px; color: #fff; flex-shrink: 0; }
+.setup-theme-row.selected .setup-check { display: flex; }
+.setup-options { background: var(--card-glass); border: 0.5px solid var(--card-border); border-radius: 14px; padding: 18px 20px; margin-bottom: 14px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.setup-opt-info { display: flex; flex-direction: column; gap: 5px; flex: 1; }
+.setup-opt-label { font-size: 15px; font-weight: 500; color: var(--text-light); line-height: 1.3; }
+.setup-opt-sub { font-size: 12px; color: var(--text-muted); line-height: 1.4; }
+.count-info { background: rgba(255,255,255,0.04); border: 0.5px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 14px 18px; margin-bottom: 18px; font-size: 13px; color: var(--text-muted); line-height: 1.7; }
+.count-bold { color: var(--aurora-pink); font-weight: 600; }
+
+/* ── Responsive ──────────────────────────────────────────────────────────────── */
+@media (min-width: 640px) {
+  .page { padding: 32px 24px 60px; max-width: 560px; margin: 0 auto; }
+  .header { padding: 20px 32px 16px; }
+  .tabs { padding: 12px 24px 0; }
+  .card-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (min-width: 960px) {
+  .page { max-width: 680px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Aurora background orbs -->
+<div class="aurora-bg">
+  <div class="aurora-orb orb1"></div>
+  <div class="aurora-orb orb2"></div>
+  <div class="aurora-orb orb3"></div>
+  <div class="aurora-orb orb4"></div>
+</div>
+
+<div class="app">
+
+  <!-- Header -->
+  <header class="header">
+    <div class="brand">Her Aurora</div>
+    <div class="streak-badge">🔥 <span id="streak-count">7</span> 天連續</div>
+  </header>
+
+  <!-- Tab bar -->
+  <nav class="tabs">
+    <button class="tab active" data-page="home">首頁</button>
+    <button class="tab" data-page="themes">主題</button>
+    <button class="tab" data-page="collection">收藏</button>
+    <button class="tab" data-page="share">分享</button>
+    <button class="tab" data-page="classroom">課堂</button>
+  </nav>
+
+  <!-- ── HOME PAGE ── -->
+  <div class="page active" id="page-home">
+    <p class="section-eyebrow" id="home-date"></p>
+    <h1 class="section-title">今日金句卡</h1>
+
+    <!-- Daily CTA / Already drawn state -->
+    <div class="daily-cta" id="daily-cta" onclick="handleDailyCta()">
+      <span class="cta-label" id="daily-cta-label">DRAW TODAY'S CARD</span>
+      <div class="cta-title" id="daily-cta-title">輕觸翻開<br>今日的卡</div>
+      <span class="cta-arrow" id="daily-cta-arrow">✦ 點擊抽卡</span>
+    </div>
+
+    <!-- Theme chips -->
+    <p class="section-eyebrow">主題快速抽卡</p>
+    <div class="theme-grid" id="home-theme-chips"></div>
+
+    <!-- Classroom CTA -->
+    <button class="draw-btn" onclick="switchTab('classroom')" style="margin-top:8px">
+      🖥️ 進入課堂互動模式
+    </button>
+  </div>
+
+  <!-- ── CARD DETAIL (embedded in Home when drawn) ── -->
+  <div class="page" id="page-card">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+      <button onclick="goBack()" style="background:none;border:none;color:var(--text-dim);font-size:20px;cursor:pointer;padding:4px">←</button>
+      <span style="font-size:13px;color:var(--text-muted)" id="card-detail-source-label">今日金句卡</span>
+    </div>
+
+    <div class="card-container">
+      <div class="aurora-card" id="main-card">
+        <div class="card-bg" id="card-bg"></div>
+        <div class="card-inner">
+          <div class="card-theme-label" id="card-theme-label"></div>
+          <div class="card-divider" id="card-divider-el"></div>
+          <div class="card-title-sm" id="card-title-sm"></div>
+          <div class="card-quote" id="card-quote"></div>
+          <div class="card-reminder" id="card-reminder"></div>
+          <div class="card-reflection">
+            <div class="card-reflection-label" id="card-refl-label">✦ 今日反思</div>
+            <div class="card-reflection-text" id="card-refl-text"></div>
+          </div>
+          <div class="card-footer">
+            <span class="card-author" id="card-author"></span>
+            <span class="card-brand">Her Aurora</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tags -->
+    <div id="card-tags" style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:16px;max-width:400px;margin-left:auto;margin-right:auto"></div>
+
+    <!-- Actions -->
+    <div class="action-bar">
+      <button class="btn btn-ghost" id="fav-btn" onclick="toggleFavorite()">🤍 收藏</button>
+      <button class="btn btn-primary" onclick="goToShare()">↗ 分享圖卡</button>
+    </div>
+
+    <!-- Draw again -->
+    <div style="text-align:center;margin-top:4px" id="draw-again-wrap">
+      <button onclick="drawAgain()" style="background:none;border:none;color:var(--text-muted);font-size:13px;cursor:pointer;padding:8px">↺ 再抽一張</button>
+    </div>
+
+    <!-- Detail rows -->
+    <div style="background:var(--card-glass);border:0.5px solid var(--card-border);border-radius:14px;overflow:hidden;margin-top:12px;max-width:400px;margin-left:auto;margin-right:auto">
+      <div style="display:flex;justify-content:space-between;padding:12px 16px;border-bottom:0.5px solid var(--card-border)">
+        <span style="font-size:12px;color:var(--text-muted)">主題</span>
+        <span style="font-size:12px;font-weight:500;color:var(--text-dim)" id="detail-theme"></span>
+      </div>
+      <div style="display:flex;justify-content:space-between;padding:12px 16px">
+        <span style="font-size:12px;color:var(--text-muted)">卡片標題</span>
+        <span style="font-size:12px;font-weight:500;color:var(--text-dim)" id="detail-card-title"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── THEMES PAGE ── -->
+  <div class="page" id="page-themes">
+    <p class="section-eyebrow">8 大主題</p>
+    <h1 class="section-title">主題抽卡</h1>
+    <p style="font-size:13px;color:var(--text-muted);margin-bottom:20px">選擇一個主題，讓今天有所聚焦</p>
+    <div class="theme-list" id="theme-list"></div>
+  </div>
+
+  <!-- ── COLLECTION PAGE ── -->
+  <div class="page" id="page-collection">
+    <div class="collection-header">
+      <div>
+        <p class="section-eyebrow">我的收藏</p>
+        <h1 class="section-title" style="margin-bottom:0">收藏庫</h1>
+      </div>
+    </div>
+
+    <div class="usage-bar">
+      <div class="usage-track">
+        <div class="usage-fill" id="usage-fill" style="width:0%"></div>
+      </div>
+      <div class="usage-label" id="usage-label">0 / 20 張</div>
+    </div>
+
+    <div class="filter-chips" id="collection-filters"></div>
+    <div id="collection-content"></div>
+  </div>
+
+  <!-- ── SHARE PAGE ── -->
+  <div class="page" id="page-share">
+    <p class="section-eyebrow">匯出圖卡</p>
+    <h1 class="section-title">分享</h1>
+
+    <div class="share-preview-box" id="share-preview-box">
+      <div id="share-preview-card" style="padding:28px 24px;display:flex;flex-direction:column;gap:14px;min-height:200px;justify-content:center;position:relative">
+        <div class="card-bg" id="share-card-bg"></div>
+        <div style="position:relative;z-index:1;display:flex;flex-direction:column;gap:12px">
+          <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.18em;text-transform:uppercase" id="share-theme-label"></div>
+          <div style="width:32px;height:1px" id="share-divider"></div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:18px;font-style:italic;line-height:1.55;color:var(--text-light)" id="share-quote"></div>
+          <div style="font-size:11px;color:var(--text-dim);line-height:1.7" id="share-reminder"></div>
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <span style="font-size:10px;color:rgba(255,255,255,0.32)" id="share-author"></span>
+            <span id="share-watermark-label" style="font-family:'DM Mono',monospace;font-size:9px;color:var(--aurora-pink);opacity:0.75;background:rgba(255,255,255,0.1);border-radius:10px;padding:2px 8px">@herauroratw</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div style="text-align:center;margin-bottom:12px;font-size:11px;color:var(--text-muted)" id="share-no-card-hint">請先抽一張卡片再來分享</div>
+
+    <div class="format-selector">
+      <div class="format-opt active" data-format="ig_post" onclick="selectFormat('ig_post',this)">
+        <span class="format-opt-icon">⬛</span>
+        <div class="format-opt-info">
+          <div class="format-opt-name">IG 貼文</div>
+          <div class="format-opt-size">1:1 · 1080px</div>
+        </div>
+        <div class="format-check">✓</div>
+      </div>
+      <div class="format-opt" data-format="ig_story" onclick="selectFormat('ig_story',this)">
+        <span class="format-opt-icon">📱</span>
+        <div class="format-opt-info">
+          <div class="format-opt-name">IG Story</div>
+          <div class="format-opt-size">9:16 · 1080×1920</div>
+        </div>
+        <div class="format-check">✓</div>
+      </div>
+    </div>
+
+    <div class="watermark-row">
+      <div class="watermark-info">
+        <div class="watermark-title">品牌浮水印</div>
+        <div class="watermark-sub">@herauroratw 顯示於圖卡右下角</div>
+      </div>
+      <button class="toggle on" id="watermark-toggle" onclick="toggleWatermark(this)">
+        <div class="toggle-thumb"></div>
+      </button>
+    </div>
+
+    <div class="share-actions">
+      <button class="share-btn" onclick="handleShareAction('save')">
+        <span class="share-btn-emoji">💾</span>
+        <div class="share-btn-info">
+          <div class="share-btn-label">儲存圖卡</div>
+          <div class="share-btn-sub">下載 PNG 到本機</div>
+        </div>
+      </button>
+      <button class="share-btn" onclick="handleShareAction('ig')">
+        <span class="share-btn-emoji">📸</span>
+        <div class="share-btn-info">
+          <div class="share-btn-label">Instagram</div>
+          <div class="share-btn-sub">開啟 IG App</div>
+        </div>
+      </button>
+      <button class="share-btn" onclick="handleShareAction('line')">
+        <span class="share-btn-emoji">💬</span>
+        <div class="share-btn-info">
+          <div class="share-btn-label">LINE</div>
+          <div class="share-btn-sub">傳送至聊天室</div>
+        </div>
+      </button>
+    </div>
+  </div>
+
+  <!-- ── CLASSROOM PAGE ── -->
+  <div class="page" id="page-classroom">
+    <div class="classroom-landing">
+      <div class="classroom-icon">🖥️</div>
+      <h1 class="section-title" style="margin-bottom:0;text-align:center">課堂互動模式</h1>
+      <p style="font-size:13px;color:var(--text-muted);text-align:center;line-height:1.75">
+        全螢幕沉浸式金句卡展示<br>適合課程暖身、團體反思、工作坊活動
+      </p>
+      <div class="classroom-features">
+        <div class="feature-row"><span class="feature-icon">🌙</span><span class="feature-text">深色全螢幕，適合投影與大屏展示</span></div>
+        <div class="feature-row"><span class="feature-icon">🔀</span><span class="feature-text">隨機排序，每次課堂順序不同</span></div>
+        <div class="feature-row"><span class="feature-icon">⏱</span><span class="feature-text">內建計時器，幫助掌握反思節奏</span></div>
+        <div class="feature-row"><span class="feature-icon">↔</span><span class="feature-text">前進/後退切換，操作直覺</span></div>
+        <div class="feature-row"><span class="feature-icon">🔒</span><span class="feature-text" style="color:var(--warm-glow)">免費版：每次最多 5 張（PRO 無限）</span></div>
+      </div>
+      <button class="draw-btn" onclick="openClassroomSetup()" style="max-width:400px;width:100%">
+        選擇主題，開始課堂 →
+      </button>
+    </div>
+  </div>
+
+</div><!-- end .app -->
+
+<!-- ── Classroom Active Mode ── -->
+<div id="classroom-mode">
+  <div class="cm-top">
+    <div class="cm-theme">
+      <span class="cm-theme-emoji" id="cm-theme-emoji"></span>
+      <span class="cm-theme-label" id="cm-theme-label"></span>
+    </div>
+    <button class="cm-timer-btn" id="cm-timer-btn" onclick="toggleTimer()">⏱ 00:00</button>
+    <button class="cm-end-btn" onclick="endClassroom()">結束</button>
+  </div>
+
+  <div class="cm-body">
+    <div class="cm-card" id="cm-card">
+      <div class="cm-progress" id="cm-progress"></div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span class="cm-theme-label-card" id="cm-card-theme-label" style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.16em;text-transform:uppercase;opacity:0.7"></span>
+      </div>
+      <div class="cm-divider" id="cm-divider"></div>
+      <div class="cm-card-title" id="cm-card-title-sm"></div>
+      <div class="cm-quote" id="cm-quote"></div>
+      <div class="cm-reminder" id="cm-reminder"></div>
+      <div class="cm-reflection">
+        <div class="cm-reflection-label" id="cm-refl-label" style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.14em;margin-bottom:6px">✦ 今日反思</div>
+        <div class="cm-reflection-text" id="cm-refl-text"></div>
+      </div>
+      <div class="cm-footer-row">
+        <span class="cm-author" id="cm-author"></span>
+        <span class="cm-brand">Her Aurora</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="cm-bottom">
+    <button class="cm-nav-btn" id="cm-prev-btn" onclick="cmPrev()">← 上一張</button>
+    <div class="cm-center-info">
+      <div class="cm-count" id="cm-count"></div>
+      <div class="cm-hint">點擊任意處繼續</div>
+    </div>
+    <button class="cm-nav-btn primary" id="cm-next-btn" onclick="cmNext()">下一張 →</button>
+  </div>
+</div>
+
+<!-- Classroom Setup Modal -->
+<div class="modal-backdrop" id="setup-modal" onclick="closeSetupOnBackdrop(event)">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">課堂模式設定</div>
+    <div class="modal-sub">選擇今天課堂要使用的主題</div>
+    <div class="setup-theme-list" id="setup-theme-list"></div>
+    <div class="setup-options">
+      <div class="setup-opt-info"><div class="setup-opt-label">隨機排序</div><div class="setup-opt-sub">每次課堂順序不同</div></div>
+      <button class="toggle on" id="shuffle-toggle" onclick="toggleShuffle(this)"><div class="toggle-thumb"></div></button>
+    </div>
+    <div class="count-info" id="setup-count-info"></div>
+    <button class="draw-btn" onclick="startClassroom()" style="width:100%;margin:0">開始課堂 ✦</button>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ── Card data ──────────────────────────────────────────────────────────────────
+const THEME_META = {
+  women_growth: { label:'女性成長', emoji:'🌸', color:'#C45C9B', accent:'#F26B6B', bg:'bg-rose'   },
+  self_value:   { label:'自我價值', emoji:'✨', color:'#F5A623', accent:'#FDD08A', bg:'bg-gold'   },
+  wealth:       { label:'財富意識', emoji:'🌿', color:'#7B4F9E', accent:'#C45C9B', bg:'bg-aurora' },
+  relationship: { label:'關係覺察', emoji:'🪞', color:'#2E3F6E', accent:'#7B4F9E', bg:'bg-mist'   },
+  leadership:   { label:'領導力',   emoji:'🔥', color:'#F4874B', accent:'#F5A623', bg:'bg-gold'   },
+  emotion:      { label:'情緒療癒', emoji:'💜', color:'#7B4F9E', accent:'#C45C9B', bg:'bg-violet' },
+  dream:        { label:'夢想行動', emoji:'🌙', color:'#2E3F6E', accent:'#7B4F9E', bg:'bg-mist'   },
+  daily:        { label:'今日提醒', emoji:'☀️', color:'#F5A623', accent:'#FDD08A', bg:'bg-gold'   },
+}
+const THEME_ORDER = ['women_growth','self_value','wealth','relationship','leadership','emotion','dream','daily']
+
+const AURORA_GRADS = {
+  rose:   'linear-gradient(150deg, #7B4F9E 0%, #C45C9B 50%, #F26B6B 100%)',
+  gold:   'linear-gradient(150deg, #C45C9B 0%, #F4874B 55%, #F5A623 100%)',
+  mist:   'linear-gradient(150deg, #0D2733 0%, #2E3F6E 55%, #7B4F9E 100%)',
+  aurora: 'linear-gradient(150deg, #2E3F6E 0%, #7B4F9E 45%, #C45C9B 100%)',
+}
+
+const CARDS = [
+  // ═══════════════════════════════════════════════════════
+  // 女性成長 (20)
+  // ═══════════════════════════════════════════════════════
+  { id:'wg_001',theme:'women_growth',visual_style:'rose',is_premium:false,sort_order:1,
+    title:'你本來就是完整的',
+    quote:'你不需要先成為完整的人，才值得被愛——你本來就是完整的。',
+    reminder:'今天，允許自己在「不完美」中前進。不需要等準備好了才開始。',
+    reflection_question:'此刻什麼讓你覺得自己「還不夠」？如果那個聲音消失了，你會先做什麼？',
+    author:'Her Aurora',tags:['自我接納','薩提爾','成長']},
+  { id:'wg_002',theme:'women_growth',visual_style:'rose',is_premium:false,sort_order:2,
+    title:'允許自己閃耀',
+    quote:'縮小自己，並不會讓別人變得更大——只是讓世界失去了你本該帶來的光。',
+    reminder:'今天試著說出一個你真正的想法，不需要先問「可以嗎？」',
+    reflection_question:'你最近在哪些時刻縮小了自己？是為了誰？',
+    author:'Her Aurora',tags:['自我展現','女性力量']},
+  { id:'wg_003',theme:'women_growth',visual_style:'aurora',is_premium:false,sort_order:3,
+    title:'轉化是一種勇氣',
+    quote:'蝴蝶不是「變得更好的毛毛蟲」——她是選擇了全然不同的存在方式。',
+    reminder:'轉變不一定是改善過去，有時是放下過去，成為全新的自己。',
+    reflection_question:'你現在正在經歷哪種轉化？你是否允許自己「不一樣」？',
+    author:'Her Aurora',tags:['轉化','成長','榮格']},
+  { id:'wg_004',theme:'women_growth',visual_style:'rose',is_premium:false,sort_order:4,
+    title:'你的節奏就是你的節奏',
+    quote:'別人的成就不是你的截止日期。你有自己的時區，有自己的季節。',
+    reminder:'今天放下一個「我應該已經⋯⋯」的念頭，換成「我正在⋯⋯」。',
+    reflection_question:'你最常拿自己和誰比較？那個比較真的有意義嗎？',
+    author:'Her Aurora',tags:['自我節奏','比較心']},
+  { id:'wg_005',theme:'women_growth',visual_style:'gold',is_premium:false,sort_order:5,
+    title:'內在的聲音最先知道',
+    quote:'你的直覺不是在對抗邏輯，她是在說一種邏輯還沒趕到的語言。',
+    reminder:'今天至少有一次，在問別人之前，先問問自己的感受。',
+    reflection_question:'上一次你聽從直覺的結果是什麼？那個聲音想告訴你什麼？',
+    author:'Her Aurora',tags:['直覺','內在智慧','NLP']},
+  { id:'wg_006',theme:'women_growth',visual_style:'rose',is_premium:false,sort_order:6,
+    title:'溫柔也是一種力量',
+    quote:'溫柔不是軟弱，它是在看透了世界的複雜之後，仍然選擇善意的勇氣。',
+    reminder:'今天對一個讓你困擾的人，試著找出一個可以理解他的角度。',
+    reflection_question:'你最難溫柔以待的對象是誰？那背後藏著什麼？',
+    author:'Her Aurora',tags:['溫柔','勇氣','成長']},
+  { id:'wg_007',theme:'women_growth',visual_style:'aurora',is_premium:false,sort_order:7,
+    title:'妳不需要解釋自己',
+    quote:'你不欠任何人一個解釋。你的選擇，你的生活，你的樣子——都不需要被批准。',
+    reminder:'今天做一個不解釋原因的選擇，感受那份自由。',
+    reflection_question:'你最常對哪些人解釋自己？那個需要被理解的背後是什麼？',
+    author:'Her Aurora',tags:['自主','界限','自我接納']},
+  { id:'wg_008',theme:'women_growth',visual_style:'rose',is_premium:false,sort_order:8,
+    title:'你的身體是你的家',
+    quote:'在忙碌讓你忘記自己之前，先回到你的身體——那裡永遠有你的答案。',
+    reminder:'今天花三分鐘感受身體：哪裡緊繃？哪裡輕盈？那在說什麼？',
+    reflection_question:'你上一次真正感謝自己的身體是什麼時候？',
+    author:'Her Aurora',tags:['身體','覺察','回家']},
+  { id:'wg_009',theme:'women_growth',visual_style:'gold',is_premium:false,sort_order:9,
+    title:'成長不是線性的',
+    quote:'你不是在退步，你是在整合。每一次的跌落，都是在為更大的躍升儲蓄能量。',
+    reminder:'今天回顧一個「看似退步」的時刻，找出它帶給你的禮物。',
+    reflection_question:'你現在的「停滯」，其實是在準備什麼？',
+    author:'Her Aurora',tags:['成長','整合','非線性']},
+  { id:'wg_010',theme:'women_growth',visual_style:'aurora',is_premium:false,sort_order:10,
+    title:'她也曾經迷路過',
+    quote:'每一位走得很遠的女性，都曾在某個黑夜裡不知道出口在哪裡。迷路不是失敗，是轉彎前的停頓。',
+    reminder:'今天允許自己不知道答案，那也是一種誠實。',
+    reflection_question:'你現在的迷惘，想帶你去哪裡？',
+    author:'Her Aurora',tags:['迷路','誠實','方向']},
+  { id:'wg_011',theme:'women_growth',visual_style:'rose',is_premium:false,sort_order:11,
+    title:'你值得被好好對待',
+    quote:'你如何對待自己，就是在告訴世界如何對待你。從今天起，先給自己最好的待遇。',
+    reminder:'今天做一件「我值得」的事：一杯好茶、一個早睡、一個真誠的讚美給自己。',
+    reflection_question:'如果你是自己最好的朋友，今天你會給自己什麼？',
+    author:'Her Aurora',tags:['自我照顧','值得','界限']},
+  { id:'wg_012',theme:'women_growth',visual_style:'gold',is_premium:false,sort_order:12,
+    title:'比較是覺察的起點',
+    quote:'當你羨慕某人，那不是嫉妒——那是你的靈魂在指出它想要什麼。',
+    reminder:'今天把一個讓你羨慕的特質，轉化成一個你可以朝向的方向。',
+    reflection_question:'你最羨慕誰的什麼？那個羨慕在告訴你什麼？',
+    author:'Her Aurora',tags:['比較','覺察','渴望']},
+  { id:'wg_013',theme:'women_growth',visual_style:'rose',is_premium:false,sort_order:13,
+    title:'休息是生產力的一部分',
+    quote:'你不是機器，即使是機器也需要維修。休息不是懶惰，是讓你走更遠的補給站。',
+    reminder:'今天安排一段「什麼都不做」的時間，不帶罪惡感。',
+    reflection_question:'你上一次真正休息是什麼時候？你怎麼定義「真正的休息」？',
+    author:'Her Aurora',tags:['休息','自我照顧','永續']},
+  { id:'wg_014',theme:'women_growth',visual_style:'aurora',is_premium:false,sort_order:14,
+    title:'妳的故事還沒結束',
+    quote:'你現在所在的這一頁，不是結局。它只是一個轉折，一個讓故事變得更豐富的章節。',
+    reminder:'今天把現在的困境改寫成「主角正在經歷的試煉」。',
+    reflection_question:'如果你的人生是一本書，現在這個章節的標題是什麼？',
+    author:'Her Aurora',tags:['故事','希望','轉折']},
+  { id:'wg_015',theme:'women_growth',visual_style:'rose',is_premium:false,sort_order:15,
+    title:'勇敢不是不害怕',
+    quote:'勇敢是在害怕的同時仍然前進。你每一次顫抖著開口，都是真實的英雄主義。',
+    reminder:'今天做一件讓你有點害怕但想做的事，哪怕只有一小步。',
+    reflection_question:'你現在最害怕的事，背後藏著什麼重要的渴望？',
+    author:'Her Aurora',tags:['勇敢','恐懼','行動']},
+  { id:'wg_016',theme:'women_growth',visual_style:'gold',is_premium:false,sort_order:16,
+    title:'妳不是太多，也不是太少',
+    quote:'你的熱情不是「太誇張」，你的安靜不是「沒存在感」。你就是剛剛好的你自己。',
+    reminder:'今天允許自己完整地表達一個情緒，不要調低音量。',
+    reflection_question:'你最常覺得自己「太多」還是「太少」？那個感覺從哪裡來？',
+    author:'Her Aurora',tags:['接納','表達','完整']},
+  { id:'wg_017',theme:'women_growth',visual_style:'aurora',is_premium:false,sort_order:17,
+    title:'每個傷口都是地圖',
+    quote:'你的傷不是弱點的證明，是你走過的路的地圖。那些疤，都是你還在的證據。',
+    reminder:'今天對一個你曾經受傷的地方，說一句「謝謝你讓我更認識自己」。',
+    reflection_question:'你的哪個傷口，其實帶給了你意想不到的禮物？',
+    author:'Her Aurora',tags:['療癒','傷口','榮格']},
+  { id:'wg_018',theme:'women_growth',visual_style:'rose',is_premium:false,sort_order:18,
+    title:'不是每件事都需要解決',
+    quote:'有些事不需要被解決，只需要被感受、被承認、被允許存在。',
+    reminder:'今天遇到無法解決的事，試著說：「我允許這件事現在就是這樣。」',
+    reflection_question:'你現在有什麼事一直想「解決」，卻也許只需要「接受」？',
+    author:'Her Aurora',tags:['接受','放下','正念']},
+  { id:'wg_019',theme:'women_growth',visual_style:'gold',is_premium:false,sort_order:19,
+    title:'妳選擇的每一天都在創造妳',
+    quote:'你不是被動地活著，你是每天透過選擇在雕刻自己——即使是小選擇，也在塑造大格局。',
+    reminder:'今天意識地做一個「我選擇這樣」的決定，而不是「我只好這樣」。',
+    reflection_question:'今天你做的哪個選擇，最能代表你想成為的那個人？',
+    author:'Her Aurora',tags:['選擇','主動','創造']},
+  { id:'wg_020',theme:'women_growth',visual_style:'aurora',is_premium:false,sort_order:20,
+    title:'妳已經在路上了',
+    quote:'你不需要抵達才算開始。只要你在移動，只要你仍然在尋找，你就已經在路上了。',
+    reminder:'今天承認一個你已經在做的努力，無論多小，它都算數。',
+    reflection_question:'你現在「已經在路上」的，是什麼？',
+    author:'Her Aurora',tags:['旅程','當下','前進']},
+
+  // ═══════════════════════════════════════════════════════
+  // 自我價值 (20)
+  // ═══════════════════════════════════════════════════════
+  { id:'sv_001',theme:'self_value',visual_style:'gold',is_premium:false,sort_order:1,
+    title:'你的存在本身就是價值',
+    quote:'你的價值不是你的產出，不是你的效率，不是別人給你的評價——它先於這一切存在。',
+    reminder:'今天做一件純粹為了「喜歡」而非「應該」的事。',
+    reflection_question:'如果你今天什麼都沒有完成，你仍然值得被愛嗎？',
+    author:'Her Aurora',tags:['自我價值','薩提爾']},
+  { id:'sv_002',theme:'self_value',visual_style:'gold',is_premium:false,sort_order:2,
+    title:'設定界限是一種愛',
+    quote:'「不」是一個完整的句子。你不需要解釋、道歉，或讓它變得更容易被接受。',
+    reminder:'今天練習說一個真誠的「不」，不附帶任何理由。',
+    reflection_question:'你最難拒絕的是什麼？背後是什麼在驅動你說「好」？',
+    author:'Her Aurora',tags:['界限','NLP','關係']},
+  { id:'sv_003',theme:'self_value',visual_style:'rose',is_premium:false,sort_order:3,
+    title:'你值得佔有空間',
+    quote:'讓自己縮小、安靜、不佔位，是一種長期的自我消耗。你值得佔有你的空間。',
+    reminder:'今天在一個對話中，完整說完你的想法，不要自己打斷自己。',
+    reflection_question:'你習慣在哪些場合讓自己「縮小」？那個習慣從哪裡來？',
+    author:'Her Aurora',tags:['空間','自我表達']},
+  { id:'sv_004',theme:'self_value',visual_style:'aurora',is_premium:false,sort_order:4,
+    title:'讚美自己不是傲慢',
+    quote:'認可自己的進步，不會讓謙遜消失——它只是讓你能帶著更多的光繼續走。',
+    reminder:'今天對自己說出一句真誠的讚美，就像對摯友說的那種。',
+    reflection_question:'你上一次真正讚美自己是什麼時候？為什麼那麼久？',
+    author:'Her Aurora',tags:['自我讚美','自我關懷']},
+  { id:'sv_005',theme:'self_value',visual_style:'gold',is_premium:false,sort_order:5,
+    title:'你的需求是合理的',
+    quote:'需要休息、需要支持、需要被看見——這些不是弱點，是人的基本。',
+    reminder:'今天誠實說出一個你真正需要的東西，哪怕只是對自己說。',
+    reflection_question:'你最常壓抑的需求是什麼？為什麼覺得它「不重要」？',
+    author:'Her Aurora',tags:['需求','薩提爾冰山']},
+  { id:'sv_006',theme:'self_value',visual_style:'rose',is_premium:false,sort_order:6,
+    title:'你不需要先被愛才值得愛',
+    quote:'你不是因為有人愛你才有價值，你本來就有——愛只是讓你看見這件事的鏡子。',
+    reminder:'今天對自己做一件「因為我值得」的事，不需要任何外在理由。',
+    reflection_question:'你的自我價值感，有多少來自外界的認可？如果那些消失了呢？',
+    author:'Her Aurora',tags:['自我價值','獨立','愛']},
+  { id:'sv_007',theme:'self_value',visual_style:'aurora',is_premium:false,sort_order:7,
+    title:'你的感受永遠有效',
+    quote:'你的感受不需要被證明是「合理的」才能存在。感受就是感受，它從來不需要辯護。',
+    reminder:'今天當某個感受升起，試著說：「這個感受是真實的，我允許它在這裡。」',
+    reflection_question:'你最常否定自己哪個感受？那個否定從哪裡學來的？',
+    author:'Her Aurora',tags:['感受','接納','薩提爾']},
+  { id:'sv_008',theme:'self_value',visual_style:'gold',is_premium:false,sort_order:8,
+    title:'你不是你的錯誤',
+    quote:'你犯了錯，不等於你是個錯誤。行為可以被糾正，但你的本質，從來都是完整的。',
+    reminder:'今天對一個你還在懊悔的事，試著說：「我從中學到了，我已經盡力了。」',
+    reflection_question:'你最難原諒自己的是什麼？那個標準從哪裡來？',
+    author:'Her Aurora',tags:['原諒','錯誤','成長']},
+  { id:'sv_009',theme:'self_value',visual_style:'rose',is_premium:false,sort_order:9,
+    title:'你的意見值得被聽見',
+    quote:'你有思考、有感受、有觀點——這些都值得被說出口，不需要等到「更有資格」的時候。',
+    reminder:'今天在一個你通常沉默的場合，說出你的一個真實想法。',
+    reflection_question:'你在哪些場合最不敢表達意見？那個沉默在保護什麼？',
+    author:'Her Aurora',tags:['表達','自信','價值']},
+  { id:'sv_010',theme:'self_value',visual_style:'aurora',is_premium:false,sort_order:10,
+    title:'比較是偷走快樂的賊',
+    quote:'當你看著別人的精彩，你往往看不見自己的豐盛。把目光收回來，你的故事也很美。',
+    reminder:'今天把花在比較的時間，用來欣賞自己一個做得好的地方。',
+    reflection_question:'你最常把自己和誰比較？那個比較讓你感覺如何？',
+    author:'Her Aurora',tags:['比較','自我欣賞','專注']},
+  { id:'sv_011',theme:'self_value',visual_style:'gold',is_premium:false,sort_order:11,
+    title:'你有權利改變心意',
+    quote:'改變想法不是不一致，是成長。當你有了新的理解，更新你的選擇，是智慧而非軟弱。',
+    reminder:'今天允許自己改變對一件事的看法，不需要替之前的自己辯解。',
+    reflection_question:'你有什麼想法一直不敢改變，因為怕別人怎麼看？',
+    author:'Her Aurora',tags:['成長','彈性','自主']},
+  { id:'sv_012',theme:'self_value',visual_style:'rose',is_premium:false,sort_order:12,
+    title:'你的過去不定義你的未來',
+    quote:'你是從過去走來的，但你不是過去。每一個現在，都是重新開始的機會。',
+    reminder:'今天做一個和過去習慣不同的選擇，哪怕只是很小的一個。',
+    reflection_question:'你現在的哪個信念，其實是過去的傷口在說話？',
+    author:'Her Aurora',tags:['過去','重新開始','自由']},
+  { id:'sv_013',theme:'self_value',visual_style:'aurora',is_premium:false,sort_order:13,
+    title:'你值得真實的關係',
+    quote:'你不需要表演一個更好的自己來換取愛。真實的你，才能吸引真實的連結。',
+    reminder:'今天在一段關係中，分享一個真實的你——哪怕有點脆弱。',
+    reflection_question:'你最常在哪些人面前「表演」自己？那個表演花了你多少力氣？',
+    author:'Her Aurora',tags:['真實','關係','脆弱']},
+  { id:'sv_014',theme:'self_value',visual_style:'gold',is_premium:false,sort_order:14,
+    title:'你的夢想值得被認真對待',
+    quote:'把自己的夢想說成「只是」——只是想想、只是玩玩——是對自己最深的不尊重。',
+    reminder:'今天把一個「只是想想」的夢想，升級為「我真的想要」。',
+    reflection_question:'你最不敢承認的夢想是什麼？是什麼讓你不敢認真？',
+    author:'Her Aurora',tags:['夢想','認真','自我尊重']},
+  { id:'sv_015',theme:'self_value',visual_style:'rose',is_premium:false,sort_order:15,
+    title:'你不欠任何人的快樂',
+    quote:'讓自己快樂不是自私，讓別人的情緒成為你的責任才是。你的喜悅，是你自己的事。',
+    reminder:'今天做一件純粹讓自己快樂的事，不考慮別人的感受。',
+    reflection_question:'你有多少快樂是建立在「別人開心了我才能開心」上的？',
+    author:'Her Aurora',tags:['快樂','自主','責任']},
+  { id:'sv_016',theme:'self_value',visual_style:'aurora',is_premium:false,sort_order:16,
+    title:'你的獨特性是禮物',
+    quote:'你覺得自己「奇怪」的地方，可能正是世界最需要的那個部分。',
+    reminder:'今天分享一個你通常藏起來的獨特之處，看看會發生什麼。',
+    reflection_question:'你最「奇怪」的特質是什麼？如果那是你的超能力呢？',
+    author:'Her Aurora',tags:['獨特','禮物','真實']},
+  { id:'sv_017',theme:'self_value',visual_style:'gold',is_premium:false,sort_order:17,
+    title:'慢下來也是一種答案',
+    quote:'不是每個問題都需要立刻解答。有時候，讓自己慢下來，就是最誠實的回應。',
+    reminder:'今天對一個急著要答案的問題，允許自己說：「我還在思考。」',
+    reflection_question:'你現在最想慢下來的是哪個部分？什麼讓你無法慢？',
+    author:'Her Aurora',tags:['慢下來','誠實','空間']},
+  { id:'sv_018',theme:'self_value',visual_style:'rose',is_premium:false,sort_order:18,
+    title:'你的付出值得被看見',
+    quote:'你的努力、你的細心、你的在乎——即使沒有人說謝謝，它們都是真實存在的價值。',
+    reminder:'今天親自承認自己的一個付出，不需要等別人說。',
+    reflection_question:'你最渴望被看見的付出是什麼？你有沒有先看見自己？',
+    author:'Her Aurora',tags:['付出','看見','認可']},
+  { id:'sv_019',theme:'self_value',visual_style:'aurora',is_premium:false,sort_order:19,
+    title:'你可以同時脆弱又堅強',
+    quote:'脆弱和堅強不是對立的——最堅強的人，往往是那些允許自己脆弱的人。',
+    reminder:'今天讓自己在一個安全的地方脆弱一次，看看那是什麼感覺。',
+    reflection_question:'你覺得展示脆弱是危險的嗎？那個危險感從哪裡來？',
+    author:'Her Aurora',tags:['脆弱','堅強','整合']},
+  { id:'sv_020',theme:'self_value',visual_style:'gold',is_premium:false,sort_order:20,
+    title:'你就是你最重要的關係',
+    quote:'所有的關係都會流動，但你和自己的關係，是唯一一輩子都在的。',
+    reminder:'今天花十分鐘和自己在一起，不做任何事，只是陪著自己。',
+    reflection_question:'如果你把對待自己的方式，應用在你最愛的人身上，那會是什麼樣的對待？',
+    author:'Her Aurora',tags:['自我關係','陪伴','核心']},
+
+  // ═══════════════════════════════════════════════════════
+  // 財富意識 (20)
+  // ═══════════════════════════════════════════════════════
+  { id:'wl_001',theme:'wealth',visual_style:'gold',is_premium:false,sort_order:1,
+    title:'豐盛是一種內在狀態',
+    quote:'財富不只是數字，它是一種相信「我足夠、我能夠、我值得」的內在頻率。',
+    reminder:'今天找出生活中三件你已經「擁有」的事，感受豐盛而非匱乏。',
+    reflection_question:'你對金錢的第一個記憶是什麼？那個記憶如何塑造了你現在的財富觀？',
+    author:'Her Aurora',tags:['豐盛','財富心態']},
+  { id:'wl_002',theme:'wealth',visual_style:'gold',is_premium:false,sort_order:2,
+    title:'接收也是一種能力',
+    quote:'只懂得給予而不懂接收，會讓豐盛的流動停滯。允許自己接收，也是一種慷慨。',
+    reminder:'今天當有人給予你讚美或幫助時，試著只說「謝謝」，不要推辭。',
+    reflection_question:'你接收別人的好意時，通常第一個念頭是什麼？',
+    author:'Her Aurora',tags:['接收','豐盛流動']},
+  { id:'wl_003',theme:'wealth',visual_style:'aurora',is_premium:false,sort_order:3,
+    title:'金錢是能量的流動',
+    quote:'你對金錢的感受，決定了它如何在你的生命中流動——是緊抓還是流通？',
+    reminder:'今天做一個「與金錢和解」的小動作：整理錢包、記帳、或感謝一筆收入。',
+    reflection_question:'你現在對金錢的態度是「緊抓」還是「流動」？是什麼造成這個狀態？',
+    author:'Her Aurora',tags:['金錢能量','財富觀']},
+  { id:'wl_004',theme:'wealth',visual_style:'gold',is_premium:false,sort_order:4,
+    title:'你值得高收入',
+    quote:'相信自己值得高收入，不是貪婪——它是對自己能力的尊重與承諾。',
+    reminder:'今天思考：如果我的收入翻倍，我的生活和服務會如何改變？',
+    reflection_question:'當你想像自己有更多財富時，第一個浮現的情緒是什麼？那個情緒想說什麼？',
+    author:'Her Aurora',tags:['收入','自我價值','財富意識']},
+  { id:'wl_005',theme:'wealth',visual_style:'rose',is_premium:false,sort_order:5,
+    title:'投資自己是最好的資產配置',
+    quote:'你花在成長、學習和健康上的每一分錢，都是複利最高的投資。',
+    reminder:'今天為自己的成長做一個小投資：一本書、一門課、或一小時的深度思考。',
+    reflection_question:'過去一年你為自己做了哪些投資？你最想在哪個面向繼續投入？',
+    author:'Her Aurora',tags:['自我投資','成長','財富']},
+  { id:'wl_006',theme:'wealth',visual_style:'aurora',is_premium:false,sort_order:6,
+    title:'財富從感謝開始',
+    quote:'感謝你已經擁有的，是吸引更多豐盛的第一步。匱乏感讓財富遠離，感恩讓財富靠近。',
+    reminder:'今天寫下五件你對財務狀況感謝的事，無論大小。',
+    reflection_question:'你現在的財務狀況，有什麼值得感謝的？',
+    author:'Her Aurora',tags:['感恩','豐盛','吸引力']},
+  { id:'wl_007',theme:'wealth',visual_style:'gold',is_premium:false,sort_order:7,
+    title:'你的才能值得報酬',
+    quote:'把你的才能當成義務免費提供，是在訓練世界不重視你的價值。定價是一種尊重。',
+    reminder:'今天思考：我提供的服務或才能，是否被合理定價了？',
+    reflection_question:'你最難開口要求報酬的是什麼？那個困難說明了什麼？',
+    author:'Her Aurora',tags:['才能','定價','尊重']},
+  { id:'wl_008',theme:'wealth',visual_style:'rose',is_premium:false,sort_order:8,
+    title:'花錢也是一種選票',
+    quote:'你把錢花在哪裡，就是在支持哪種世界。有意識的消費，是你對價值觀的投票。',
+    reminder:'今天回顧最近的一筆消費，它符合你的價值觀嗎？',
+    reflection_question:'你的消費習慣，真實反映了你最在乎的事嗎？',
+    author:'Her Aurora',tags:['消費','價值觀','意識']},
+  { id:'wl_009',theme:'wealth',visual_style:'aurora',is_premium:false,sort_order:9,
+    title:'財務安全感從內在建立',
+    quote:'外在的財富可以消失，但你建立財務知識和能力的信心，永遠帶得走。',
+    reminder:'今天學一個關於財務的新知識，無論多小。',
+    reflection_question:'你的財務安全感，有多少來自數字，有多少來自你對自己的信心？',
+    author:'Her Aurora',tags:['安全感','財務知識','信心']},
+  { id:'wl_010',theme:'wealth',visual_style:'gold',is_premium:false,sort_order:10,
+    title:'富有的人思考機會，匱乏的人思考障礙',
+    quote:'面對同一件事，不同的心態框架，創造截然不同的結果。選擇你的框架。',
+    reminder:'今天把一個「問題」改寫成「機會」，看看視角如何改變。',
+    reflection_question:'你最常用「問題框架」還是「機會框架」思考財富？',
+    author:'Her Aurora',tags:['思維框架','機會','財富心態']},
+  { id:'wl_011',theme:'wealth',visual_style:'rose',is_premium:false,sort_order:11,
+    title:'小額儲蓄也是豐盛的練習',
+    quote:'重要的不是每次存多少，而是你建立了「我在照顧未來的自己」的習慣和心態。',
+    reminder:'今天做一個小的財務照顧行動：轉帳到儲蓄、取消不需要的訂閱、或記帳。',
+    reflection_question:'你是否在「照顧未來的自己」？你的財務習慣說明了什麼？',
+    author:'Her Aurora',tags:['儲蓄','習慣','照顧自己']},
+  { id:'wl_012',theme:'wealth',visual_style:'aurora',is_premium:false,sort_order:12,
+    title:'金錢不是萬能，但自由是',
+    quote:'追求財富的深層動機，往往是對自由的渴望——時間自由、選擇自由、心靈自由。',
+    reminder:'今天思考：如果你有了財務自由，你最想做什麼？那個答案指向什麼？',
+    reflection_question:'你對財富的渴望，最核心的是什麼？是安全、自由、還是影響力？',
+    author:'Her Aurora',tags:['自由','動機','財富']},
+  { id:'wl_013',theme:'wealth',visual_style:'gold',is_premium:false,sort_order:13,
+    title:'分享財富讓財富流動',
+    quote:'吝於分享的心態，其實是匱乏意識的表現。慷慨是豐盛意識最美的表達。',
+    reminder:'今天做一個慷慨的行動：請一杯咖啡、分享一個資源、或給出一個真誠的讚美。',
+    reflection_question:'你在財富上的慷慨程度，反映了你對豐盛的信心程度嗎？',
+    author:'Her Aurora',tags:['慷慨','分享','豐盛']},
+  { id:'wl_014',theme:'wealth',visual_style:'rose',is_premium:false,sort_order:14,
+    title:'收入多元化是智慧',
+    quote:'不把所有雞蛋放在同一個籃子，不只是投資策略，也是生命哲學。',
+    reminder:'今天思考：我目前的收入來源有幾個？我想增加哪一種？',
+    reflection_question:'你的收入目前有多少元，有多少依賴單一來源？那讓你感到安全嗎？',
+    author:'Her Aurora',tags:['多元收入','智慧','財務規劃']},
+  { id:'wl_015',theme:'wealth',visual_style:'aurora',is_premium:false,sort_order:15,
+    title:'財富是你服務世界的能力放大器',
+    quote:'更多的財富讓你能做更多有意義的事。把賺錢和貢獻連結，財富就有了使命感。',
+    reminder:'今天思考：如果我更富有，我能為世界做什麼不同的貢獻？',
+    reflection_question:'你的財富目標，如何和你對世界的貢獻相連？',
+    author:'Her Aurora',tags:['使命','貢獻','財富']},
+  { id:'wl_016',theme:'wealth',visual_style:'gold',is_premium:false,sort_order:16,
+    title:'財務誠實是自我尊重',
+    quote:'清楚知道自己的財務狀況，無論好壞，是對自己最基本的誠實與尊重。',
+    reminder:'今天花十分鐘，誠實地看一眼你的財務狀況：收入、支出、儲蓄。',
+    reflection_question:'你有多久沒有誠實地看過自己的財務狀況了？那個迴避說明什麼？',
+    author:'Her Aurora',tags:['誠實','財務','自我尊重']},
+  { id:'wl_017',theme:'wealth',visual_style:'rose',is_premium:false,sort_order:17,
+    title:'你的時間就是你的財富',
+    quote:'時間是你唯一無法再生的資源。你把時間花在哪裡，就是在投資什麼樣的未來。',
+    reminder:'今天回顧你的時間使用方式，有沒有什麼可以重新分配？',
+    reflection_question:'你的時間分配，真的反映了你的財富和人生優先順序嗎？',
+    author:'Her Aurora',tags:['時間','資源','投資']},
+  { id:'wl_018',theme:'wealth',visual_style:'aurora',is_premium:false,sort_order:18,
+    title:'向有智慧的人學習財富',
+    quote:'財富知識不是天生的，是學來的。找到在財務上讓你敬佩的人，向他們學習。',
+    reminder:'今天找一個財務上讓你欣賞的人，觀察他們一個具體的習慣或思維。',
+    reflection_question:'你身邊有誰的財務思維讓你欣賞？你從他們身上想學什麼？',
+    author:'Her Aurora',tags:['學習','榜樣','財富智慧']},
+  { id:'wl_019',theme:'wealth',visual_style:'gold',is_premium:false,sort_order:19,
+    title:'富足不代表奢侈',
+    quote:'真正的富足是：你不再需要用購買來填補內心的空缺。那是自由，不是克制。',
+    reminder:'今天觀察自己的一次消費衝動——它在填補什麼？',
+    reflection_question:'你的哪些消費習慣，其實是在填補情緒的空缺而非真正的需求？',
+    author:'Her Aurora',tags:['富足','情緒消費','覺察']},
+  { id:'wl_020',theme:'wealth',visual_style:'rose',is_premium:false,sort_order:20,
+    title:'財富意識從今天開始',
+    quote:'你不需要等到有錢才開始有「財富意識」。財富意識是因，財富是果。',
+    reminder:'今天做一個「有財富意識的人會做」的行動，無論你目前的財務狀況。',
+    reflection_question:'如果你現在就擁有「豐盛意識」，今天你會做什麼不同的選擇？',
+    author:'Her Aurora',tags:['起點','意識','財富']},
+
+  // ═══════════════════════════════════════════════════════
+  // 關係覺察 (20)
+  // ═══════════════════════════════════════════════════════
+  { id:'rel_001',theme:'relationship',visual_style:'aurora',is_premium:false,sort_order:1,
+    title:'界限是愛的容器',
+    quote:'沒有界限的愛，最終會變成憤恨。界限不是距離，而是讓愛能夠持續流動的容器。',
+    reminder:'今天覺察：在哪段關係中，你給出了超過自己能給的？',
+    reflection_question:'你在哪段關係中最難設立界限？是什麼讓你這樣做？',
+    author:'Her Aurora',tags:['界限','關係','薩提爾']},
+  { id:'rel_002',theme:'relationship',visual_style:'mist',is_premium:false,sort_order:2,
+    title:'溝通始於傾聽自己',
+    quote:'在你真正傾聽自己之前，你無法真正傾聽另一個人——關係的品質從內在開始。',
+    reminder:'今天在一次對話中，先在心裡問：「我現在的感受是什麼？」再開口。',
+    reflection_question:'你最近在哪個對話中感到沒有被聽見？你自己是否也沒有聽見自己？',
+    author:'Her Aurora',tags:['溝通','傾聽','關係']},
+  { id:'rel_003',theme:'relationship',visual_style:'rose',is_premium:false,sort_order:3,
+    title:'你選擇留下的理由很重要',
+    quote:'留在一段關係中，是因為選擇，還是因為害怕離開？這個問題值得誠實回答。',
+    reminder:'今天對你最重要的一段關係，想想：如果沒有恐懼，你會如何選擇？',
+    reflection_question:'你目前最重要的關係中，你留下的主要動力是什麼？',
+    author:'Her Aurora',tags:['選擇','關係覺察']},
+  { id:'rel_004',theme:'relationship',visual_style:'aurora',is_premium:false,sort_order:4,
+    title:'不是所有人都需要懂你',
+    quote:'期待每個人都理解你，會讓你不斷解釋自己。有些人只需要共存，不需要相知。',
+    reminder:'今天放下一個「我需要被他/她理解」的期待，感受那個鬆動。',
+    reflection_question:'你最渴望被哪個人理解？如果那永遠不會發生，你能接受嗎？',
+    author:'Her Aurora',tags:['期待','關係','接納']},
+  { id:'rel_005',theme:'relationship',visual_style:'gold',is_premium:false,sort_order:5,
+    title:'與自己的關係是一切的基礎',
+    quote:'你與自己的關係，是所有其他關係的模板。先成為你自己最好的伴侶。',
+    reminder:'今天做一件只為取悅自己的事，不用向任何人報告。',
+    reflection_question:'如果把你對自己的方式應用在你最愛的人身上，那會是什麼樣的對待？',
+    author:'Her Aurora',tags:['自我關係','榮格','內在']},
+  { id:'rel_006',theme:'relationship',visual_style:'rose',is_premium:false,sort_order:6,
+    title:'愛需要說出口',
+    quote:'你心裡的愛，如果從未表達，對方是感受不到的。愛是動詞，需要行動和語言。',
+    reminder:'今天對一個你愛的人，說出或寫下你的感謝或愛意。',
+    reflection_question:'你最難向誰表達愛意？是什麼讓你說不出口？',
+    author:'Her Aurora',tags:['表達','愛','溝通']},
+  { id:'rel_007',theme:'relationship',visual_style:'aurora',is_premium:false,sort_order:7,
+    title:'憤怒是需求未被滿足的訊號',
+    quote:'當你在關係中憤怒，通常有一個需求沒有被看見。找到那個需求，比贏得爭論更重要。',
+    reminder:'今天當關係中有衝突時，先問：「我真正需要的是什麼？」',
+    reflection_question:'你最近一次在關係中憤怒，背後真正沒有被滿足的需求是什麼？',
+    author:'Her Aurora',tags:['憤怒','需求','薩提爾']},
+  { id:'rel_008',theme:'relationship',visual_style:'mist',is_premium:false,sort_order:8,
+    title:'修復比正確更重要',
+    quote:'在關係中，贏得爭論往往輸掉了關係。願意修復，比堅持自己對，更需要勇氣。',
+    reminder:'今天在一段關係中，選擇修復而非正確——哪怕你覺得你是對的。',
+    reflection_question:'你在關係中更想「贏」還是更想「連結」？那個選擇如何影響關係？',
+    author:'Her Aurora',tags:['修復','勇氣','關係']},
+  { id:'rel_009',theme:'relationship',visual_style:'gold',is_premium:false,sort_order:9,
+    title:'你無法改變另一個人',
+    quote:'你能改變的只有你自己的反應和選擇。試圖改變別人，是在錯誤的地方尋找控制感。',
+    reminder:'今天把用來「改變某人」的能量，轉移到改變你自己的一個行為上。',
+    reflection_question:'你最想改變的那個人，如果他永遠不會改變，你的選擇是什麼？',
+    author:'Her Aurora',tags:['改變','接受','自主']},
+  { id:'rel_010',theme:'relationship',visual_style:'rose',is_premium:false,sort_order:10,
+    title:'孤獨不等於孤立',
+    quote:'孤獨是一種狀態，孤立是一種感受。你可以獨處而不孤立，也可以在人群中卻深感孤立。',
+    reminder:'今天給自己一段獨處的時間，好好和自己在一起，而不是逃避。',
+    reflection_question:'你害怕獨處嗎？那個害怕說明你和自己的關係如何？',
+    author:'Her Aurora',tags:['孤獨','獨處','內在']},
+  { id:'rel_011',theme:'relationship',visual_style:'aurora',is_premium:false,sort_order:11,
+    title:'關係是兩個完整的人相遇',
+    quote:'最健康的關係不是兩個半個人合成一個，而是兩個完整的人選擇相伴而行。',
+    reminder:'今天思考：在你的重要關係中，你是帶著完整的自己，還是在依賴對方填補你的空缺？',
+    reflection_question:'你在關係中最常「依賴」對方提供什麼？你能為自己提供這個嗎？',
+    author:'Her Aurora',tags:['完整','健康關係','自主']},
+  { id:'rel_012',theme:'relationship',visual_style:'gold',is_premium:false,sort_order:12,
+    title:'感謝是關係的潤滑劑',
+    quote:'我們習慣把感謝留給陌生人，卻對最親近的人吝於表達。那些理所當然，其實不是。',
+    reminder:'今天對一個你「理所當然」感謝的人，說出一個具體的謝謝。',
+    reflection_question:'你最少感謝的那個人是誰？為什麼？',
+    author:'Her Aurora',tags:['感謝','關係','珍惜']},
+  { id:'rel_013',theme:'relationship',visual_style:'rose',is_premium:false,sort_order:13,
+    title:'聆聽是最深的尊重',
+    quote:'真正的聆聽不是等待你說話的時機，而是真正進入對方的世界，好奇地待在那裡。',
+    reminder:'今天在一次對話中，練習完全聆聽——不打斷、不給建議，只是理解。',
+    reflection_question:'你上一次真正被聆聽是什麼時候？那是什麼感覺？',
+    author:'Her Aurora',tags:['聆聽','尊重','連結']},
+  { id:'rel_014',theme:'relationship',visual_style:'mist',is_premium:false,sort_order:14,
+    title:'放手是另一種愛',
+    quote:'有時候，讓一段關係自然結束，是對彼此最深的尊重和愛。緊抓有時是傷害，不是愛。',
+    reminder:'今天思考：有沒有一段關係，你其實已經知道需要放手了？',
+    reflection_question:'你現在最難放手的關係是什麼？你緊抓著它的原因是愛還是恐懼？',
+    author:'Her Aurora',tags:['放手','愛','勇氣']},
+  { id:'rel_015',theme:'relationship',visual_style:'aurora',is_premium:false,sort_order:15,
+    title:'投射是一面鏡子',
+    quote:'當你對某人強烈反感，往往是在某人身上看見了自己不願承認的部分。',
+    reminder:'今天思考：你最不喜歡某人的那個特質，你自己有沒有？',
+    reflection_question:'你最無法忍受別人的哪個特質？在你自己身上，它以什麼形式存在？',
+    author:'Her Aurora',tags:['投射','榮格','陰影']},
+  { id:'rel_016',theme:'relationship',visual_style:'gold',is_premium:false,sort_order:16,
+    title:'關係需要空間才能生長',
+    quote:'太緊密的關係會窒息，太疏遠的關係會枯萎。最美的關係，有連結也有空間。',
+    reminder:'今天在你的重要關係中，給對方（也給自己）一點空間。',
+    reflection_question:'你在關係中更常「靠太近」還是「保持距離」？那個習慣從哪裡來？',
+    author:'Her Aurora',tags:['空間','平衡','關係']},
+  { id:'rel_017',theme:'relationship',visual_style:'rose',is_premium:false,sort_order:17,
+    title:'期待是隱藏的合約',
+    quote:'沒有說出口的期待，是關係中最多矛盾的來源。把期待說出來，才是對關係的誠實。',
+    reminder:'今天對一段重要關係，說出一個你一直沒說的期待。',
+    reflection_question:'你在關係中最大的「隱藏期待」是什麼？你說出口了嗎？',
+    author:'Her Aurora',tags:['期待','溝通','誠實']},
+  { id:'rel_018',theme:'relationship',visual_style:'aurora',is_premium:false,sort_order:18,
+    title:'原生家庭是起點不是終點',
+    quote:'你從家庭帶來的模式，不一定要永遠帶著。覺察是第一步，選擇是第二步。',
+    reminder:'今天觀察一個你從家庭帶來的關係模式，問自己：這是我想保留的嗎？',
+    reflection_question:'你從原生家庭繼承的哪個關係模式，現在仍然影響著你？',
+    author:'Her Aurora',tags:['原生家庭','模式','覺察']},
+  { id:'rel_019',theme:'relationship',visual_style:'mist',is_premium:false,sort_order:19,
+    title:'道歉是關係的縫合線',
+    quote:'真誠的道歉不是認輸，是對關係的珍視。「我對不起你」有時比任何解釋都更有力量。',
+    reminder:'今天思考：有沒有什麼道歉你一直欠著某人，或欠著自己？',
+    reflection_question:'你最難開口道歉的情況是什麼？那個難，背後是什麼？',
+    author:'Her Aurora',tags:['道歉','修復','勇氣']},
+  { id:'rel_020',theme:'relationship',visual_style:'gold',is_premium:false,sort_order:20,
+    title:'你值得被珍惜的關係',
+    quote:'不是每段關係都值得你全力以赴。識別哪些關係讓你成長，哪些讓你消耗，是智慧。',
+    reminder:'今天評估你的關係能量：哪些關係給你能量？哪些消耗你的能量？',
+    reflection_question:'你生命中哪段關係最讓你有活力？哪段最讓你疲憊？',
+    author:'Her Aurora',tags:['能量','智慧','選擇']},
+
+  // ═══════════════════════════════════════════════════════
+  // 領導力 (20)
+  // ═══════════════════════════════════════════════════════
+  { id:'ld_001',theme:'leadership',visual_style:'gold',is_premium:false,sort_order:1,
+    title:'真正的影響力從內在生長',
+    quote:'真正的影響力不來自頭銜，而來自你願意看見每一個人——包括你自己。',
+    reminder:'今天在一次會議或對話中，試著先聽懂對方，再說你的觀點。',
+    reflection_question:'你最近一次真正「看見」團隊中某個人，是什麼時候？那帶來了什麼？',
+    author:'Her Aurora',tags:['領導力','影響力','同理心']},
+  { id:'ld_002',theme:'leadership',visual_style:'rose',is_premium:false,sort_order:2,
+    title:'脆弱是領導者的力量',
+    quote:'願意說「我不確定」的領導者，比那些假裝無所不知的人，更能獲得真正的信任。',
+    reminder:'今天在一個安全的場合，承認一件你不確定的事。',
+    reflection_question:'在你的領導角色中，你最難承認脆弱的面向是什麼？那個保護在守護什麼？',
+    author:'Her Aurora',tags:['脆弱','信任','領導']},
+  { id:'ld_003',theme:'leadership',visual_style:'mist',is_premium:false,sort_order:3,
+    title:'清晰是最大的仁慈',
+    quote:'含糊其詞讓人猜測，清晰讓人成長。給出明確的期待，是對他人最深的尊重。',
+    reminder:'今天澄清一個你一直「希望對方自己明白」卻還沒說清楚的期待。',
+    reflection_question:'你最常在哪種情況下選擇含糊？是什麼讓你迴避清晰？',
+    author:'Her Aurora',tags:['清晰','溝通','領導']},
+  { id:'ld_004',theme:'leadership',visual_style:'aurora',is_premium:false,sort_order:4,
+    title:'放手是一種更高的掌控',
+    quote:'真正有力量的領導者知道：放手讓人成長，比緊抓每個細節更有力量。',
+    reminder:'今天把一件你一直自己做的事，真正交給他人並相信他們。',
+    reflection_question:'你最難放手的工作是什麼？那個難放手背後，你在保護什麼？',
+    author:'Her Aurora',tags:['放手','授權','信任']},
+  { id:'ld_005',theme:'leadership',visual_style:'gold',is_premium:false,sort_order:5,
+    title:'你的狀態就是團隊的狀態',
+    quote:'領導者是系統的調音師。你的內在狀態，會在整個組織中產生共鳴或噪音。',
+    reminder:'今天花5分鐘覺察自己的狀態，再進入重要的會議或決策。',
+    reflection_question:'你最近帶給團隊的「頻率」是什麼？你希望他們接收到什麼？',
+    author:'Her Aurora',tags:['狀態管理','系統','領導']},
+  { id:'ld_006',theme:'leadership',visual_style:'rose',is_premium:false,sort_order:6,
+    title:'提問比給答案更有力量',
+    quote:'最好的領導者不是那個有最多答案的人，而是那個能問出讓人深思的問題的人。',
+    reminder:'今天在一個對話中，用問題取代建議，看看發生什麼。',
+    reflection_question:'你在領導時更傾向給答案還是提問題？那個傾向的影響是什麼？',
+    author:'Her Aurora',tags:['提問','啟發','教練']},
+  { id:'ld_007',theme:'leadership',visual_style:'aurora',is_premium:false,sort_order:7,
+    title:'信任是組織的氧氣',
+    quote:'有信任的團隊能承受風暴，沒有信任的團隊會在風平浪靜時崩潰。',
+    reminder:'今天做一個建立信任的具體行動：說到做到、承認錯誤、或兌現一個承諾。',
+    reflection_question:'你的團隊對你的信任程度如何？你最近做了什麼增加或損耗了信任？',
+    author:'Her Aurora',tags:['信任','團隊','文化']},
+  { id:'ld_008',theme:'leadership',visual_style:'gold',is_premium:false,sort_order:8,
+    title:'看見他人的潛力是禮物',
+    quote:'當你比一個人更早看見他的潛力，你就給了他一個相信自己的機會。',
+    reminder:'今天告訴一個人，你看見了他們身上什麼潛力或特質。',
+    reflection_question:'誰是第一個看見你潛力的人？那對你產生了什麼影響？',
+    author:'Her Aurora',tags:['潛力','看見','培育']},
+  { id:'ld_009',theme:'leadership',visual_style:'mist',is_premium:false,sort_order:9,
+    title:'決策不需要完美',
+    quote:'等待完美的資訊才決策，往往錯失最好的時機。70%的資訊，100%的行動力。',
+    reminder:'今天做一個你一直猶豫的決策，接受不完美，但保持可以調整的心態。',
+    reflection_question:'你最常因為什麼原因延遲決策？那個延遲的代價是什麼？',
+    author:'Her Aurora',tags:['決策','行動','不完美']},
+  { id:'ld_010',theme:'leadership',visual_style:'rose',is_premium:false,sort_order:10,
+    title:'回饋是愛的行動',
+    quote:'真正關心一個人，就願意給出讓他們成長的誠實回饋，即使那不容易聽。',
+    reminder:'今天給一個人一個你一直想說但沒說的誠實、建設性的回饋。',
+    reflection_question:'你最難給出回饋的對象是誰？是什麼讓你沉默？',
+    author:'Her Aurora',tags:['回饋','誠實','關心']},
+  { id:'ld_011',theme:'leadership',visual_style:'aurora',is_premium:false,sort_order:11,
+    title:'承認錯誤是領導者的高度',
+    quote:'說「我錯了，我來承擔」需要比「那不是我的責任」更大的力量。',
+    reminder:'今天對一個你做過的決策錯誤，誠實地面對它，而不是找理由。',
+    reflection_question:'你上一次公開承認錯誤是什麼時候？那之後發生了什麼？',
+    author:'Her Aurora',tags:['承擔','誠實','高度']},
+  { id:'ld_012',theme:'leadership',visual_style:'gold',is_premium:false,sort_order:12,
+    title:'願景讓人願意走遠路',
+    quote:'有清晰願景的領導者，能讓人在最難的時候仍然知道為什麼要繼續前進。',
+    reminder:'今天重新對自己說一次：你的領導願景是什麼？它清晰嗎？',
+    reflection_question:'你的團隊知道你的願景嗎？他們能用自己的話說出來嗎？',
+    author:'Her Aurora',tags:['願景','方向','領導']},
+  { id:'ld_013',theme:'leadership',visual_style:'rose',is_premium:false,sort_order:13,
+    title:'包容多元是競爭力',
+    quote:'最強的團隊不是由一群相似的人組成，而是由不同背景、不同思維的人共同創造的。',
+    reminder:'今天在一個決策中，主動尋求一個和你想法不同的觀點。',
+    reflection_question:'你的團隊有足夠的多元聲音嗎？你如何確保不同意見被聽見？',
+    author:'Her Aurora',tags:['多元','包容','創新']},
+  { id:'ld_014',theme:'leadership',visual_style:'mist',is_premium:false,sort_order:14,
+    title:'自我覺察是領導力的基礎',
+    quote:'不了解自己的領導者，是在黑暗中帶領別人。自我覺察是所有領導力發展的起點。',
+    reminder:'今天花十分鐘反思：這週我在領導上的盲點是什麼？',
+    reflection_question:'你的領導風格的最大盲點是什麼？你如何得知的？',
+    author:'Her Aurora',tags:['自我覺察','盲點','成長']},
+  { id:'ld_015',theme:'leadership',visual_style:'aurora',is_premium:false,sort_order:15,
+    title:'文化是你每天塑造的',
+    quote:'文化不是你掛在牆上的標語，是你每天的行為選擇。你今天選擇了什麼文化？',
+    reminder:'今天做一個能強化你期望團隊文化的具體行動。',
+    reflection_question:'你期望的團隊文化和你的實際日常行為，是否一致？',
+    author:'Her Aurora',tags:['文化','行動','一致性']},
+  { id:'ld_016',theme:'leadership',visual_style:'gold',is_premium:false,sort_order:16,
+    title:'照顧自己才能照顧他人',
+    quote:'在飛機上，要先戴好自己的氧氣罩才能幫助別人。領導力從自我照顧開始。',
+    reminder:'今天做一件照顧自己能量的事，讓自己保持在最佳狀態。',
+    reflection_question:'你的領導能量目前是滿的還是虧損的？你在如何補充它？',
+    author:'Her Aurora',tags:['自我照顧','能量','永續']},
+  { id:'ld_017',theme:'leadership',visual_style:'rose',is_premium:false,sort_order:17,
+    title:'慶祝成功和學習失敗同樣重要',
+    quote:'只關注問題而忘記慶祝成功，會耗盡團隊的動力。兩者都是領導者的責任。',
+    reminder:'今天找一個可以和團隊慶祝的成就，無論大小。',
+    reflection_question:'你上一次真正慶祝自己或團隊的成功是什麼時候？為什麼那麼少？',
+    author:'Her Aurora',tags:['慶祝','動力','平衡']},
+  { id:'ld_018',theme:'leadership',visual_style:'mist',is_premium:false,sort_order:18,
+    title:'影響力比職權更重要',
+    quote:'職權可以讓人服從，影響力讓人願意跟隨。你更依賴哪一個？',
+    reminder:'今天思考：在沒有職權的情況下，你能影響多少人？那就是你真正的領導力。',
+    reflection_question:'你的影響力建立在什麼基礎上？如果頭銜消失了，它還在嗎？',
+    author:'Her Aurora',tags:['影響力','職權','真實']},
+  { id:'ld_019',theme:'leadership',visual_style:'aurora',is_premium:false,sort_order:19,
+    title:'最好的投資是培育下一代領導者',
+    quote:'你的領導遺產不是你做了什麼，而是你培育了誰，以及他們又培育了誰。',
+    reminder:'今天做一個投資在某人成長的行動：分享知識、給機會、或說一句鼓勵的話。',
+    reflection_question:'你現在在培育誰成為下一個領導者？那對你意味著什麼？',
+    author:'Her Aurora',tags:['培育','傳承','遺產']},
+  { id:'ld_020',theme:'leadership',visual_style:'gold',is_premium:false,sort_order:20,
+    title:'領導是服務，不是特權',
+    quote:'最偉大的領導者明白：他們的位置是為了服務，不是為了享有特權。',
+    reminder:'今天問自己：我今天的領導行動，是在服務他人，還是在滿足自我？',
+    reflection_question:'你對「領導是服務」這個概念有多深的認同？你的日常行動是否反映這個信念？',
+    author:'Her Aurora',tags:['服務','謙遜','領導']},
+
+  // ═══════════════════════════════════════════════════════
+  // 情緒療癒 (20)
+  // ═══════════════════════════════════════════════════════
+  { id:'em_001',theme:'emotion',visual_style:'mist',is_premium:false,sort_order:1,
+    title:'感受不是你的敵人',
+    quote:'每一個情緒，都是一部分的你在說話。聽它說話，比壓制它更有療癒力量。',
+    reminder:'今天當一個情緒升起時，試著命名它，而不是推開它：「我現在感到⋯⋯」',
+    reflection_question:'你最難面對的情緒是哪一個？那個情緒通常在說什麼？',
+    author:'Her Aurora',tags:['情緒','薩提爾','療癒']},
+  { id:'em_002',theme:'emotion',visual_style:'rose',is_premium:false,sort_order:2,
+    title:'悲傷是愛的另一個名字',
+    quote:'你哭泣，是因為你曾經愛過、在意過——悲傷是愛的後記，不是軟弱的證明。',
+    reminder:'今天允許自己有五分鐘的悲傷，不需要快點「振作」。',
+    reflection_question:'你上一次允許自己好好悲傷是什麼時候？那之後你感覺如何？',
+    author:'Her Aurora',tags:['悲傷','療癒','情緒']},
+  { id:'em_003',theme:'emotion',visual_style:'aurora',is_premium:false,sort_order:3,
+    title:'憤怒背後有一個受傷的心',
+    quote:'憤怒通常站在傷痛的前面，保護著一個不願意再被看見的脆弱。',
+    reminder:'今天當感到憤怒時，試著問：「在這憤怒之下，我受傷了嗎？」',
+    reflection_question:'你最近的憤怒，背後藏著什麼樣的傷或期待？',
+    author:'Her Aurora',tags:['憤怒','保護機制','薩提爾']},
+  { id:'em_004',theme:'emotion',visual_style:'mist',is_premium:false,sort_order:4,
+    title:'身體知道你不知道的事',
+    quote:'緊繃的肩膀、緊縮的胸口、淺淺的呼吸——身體一直在說話，你是否在聽？',
+    reminder:'今天花一分鐘掃描你的身體，在哪裡感受到緊繃或不適？',
+    reflection_question:'你的身體最常以什麼方式告訴你「我不OK」？你通常如何回應？',
+    author:'Her Aurora',tags:['身體覺察','情緒','療癒']},
+  { id:'em_005',theme:'emotion',visual_style:'rose',is_premium:false,sort_order:5,
+    title:'原諒是給自己的禮物',
+    quote:'原諒，不是說「那沒關係」，而是說「我不再讓那件事繼續傷害我」。',
+    reminder:'今天思考：有什麼是你還沒有對自己原諒的？可以從一個小地方開始。',
+    reflection_question:'你現在最需要原諒的，是別人還是自己？那個原諒需要什麼條件？',
+    author:'Her Aurora',tags:['原諒','療癒','自我關懷']},
+  { id:'em_006',theme:'emotion',visual_style:'aurora',is_premium:false,sort_order:6,
+    title:'恐懼是成長的入場券',
+    quote:'每一次讓你害怕的事，往往都值得去做。恐懼說明這件事對你重要。',
+    reminder:'今天做一件讓你有點害怕的事，感受恐懼是如何在你踏出去後改變的。',
+    reflection_question:'你最大的恐懼，在保護你遠離什麼？那個保護現在還需要嗎？',
+    author:'Her Aurora',tags:['恐懼','成長','勇氣']},
+  { id:'em_007',theme:'emotion',visual_style:'mist',is_premium:false,sort_order:7,
+    title:'情緒沒有好壞之分',
+    quote:'所有的情緒都是人類的一部分。壓抑「負面」情緒，只是讓它從地下繼續運作。',
+    reminder:'今天允許自己有一個「不應該有」的情緒，不加評判地讓它存在。',
+    reflection_question:'你最常評判自己不應該有的情緒是什麼？那個評判從哪裡來？',
+    author:'Her Aurora',tags:['情緒','接納','非評判']},
+  { id:'em_008',theme:'emotion',visual_style:'rose',is_premium:false,sort_order:8,
+    title:'哭泣是療癒的一部分',
+    quote:'眼淚不是失控，是身體釋放累積的情緒壓力的方式。讓自己哭，是一種勇敢。',
+    reminder:'今天如果感受到眼淚想來，允許它來，不要用「堅強」阻止它。',
+    reflection_question:'你最近一次哭泣是什麼時候？那之後你感覺如何？',
+    author:'Her Aurora',tags:['哭泣','釋放','療癒']},
+  { id:'em_009',theme:'emotion',visual_style:'gold',is_premium:false,sort_order:9,
+    title:'創傷不是你的錯',
+    quote:'你遭受的傷害，不是因為你不夠好或不值得被好好對待。那是別人的失敗，不是你的。',
+    reminder:'今天對那個曾經受傷的自己說：「那不是你的錯，你值得更好的。」',
+    reflection_question:'你內心深處有沒有把某個傷害「歸咎於自己」的部分？',
+    author:'Her Aurora',tags:['創傷','自責','療癒']},
+  { id:'em_010',theme:'emotion',visual_style:'aurora',is_premium:false,sort_order:10,
+    title:'情緒需要出口，不是牢籠',
+    quote:'把情緒壓進去不是管理，是儲存炸彈。讓情緒有健康的出口，才是真正的力量。',
+    reminder:'今天為你的情緒找一個健康出口：寫日記、運動、畫畫、或和信任的人說話。',
+    reflection_question:'你通常如何處理強烈的情緒？那個方式對你有效嗎？',
+    author:'Her Aurora',tags:['情緒出口','管理','健康']},
+  { id:'em_011',theme:'emotion',visual_style:'mist',is_premium:false,sort_order:11,
+    title:'焦慮是對未來的在乎',
+    quote:'你焦慮，是因為你在乎。接受焦慮的存在，比對抗它更能讓它平息。',
+    reminder:'今天當焦慮升起，試著說：「我在乎這件事，所以我感到焦慮，這是正常的。」',
+    reflection_question:'你現在最焦慮的是什麼？那個焦慮說明你最在乎什麼？',
+    author:'Her Aurora',tags:['焦慮','在乎','接納']},
+  { id:'em_012',theme:'emotion',visual_style:'rose',is_premium:false,sort_order:12,
+    title:'自我批評是最殘酷的暴力',
+    quote:'你對自己說的那些苛刻的話，如果對朋友說，那是虐待。善待自己，從語言開始。',
+    reminder:'今天觀察你對自己說話的方式，把一句批評改成一句理解。',
+    reflection_question:'你內心最常對自己說的批評是什麼？你願意用對朋友說話的方式對自己說話嗎？',
+    author:'Her Aurora',tags:['自我批評','自我關懷','語言']},
+  { id:'em_013',theme:'emotion',visual_style:'aurora',is_premium:false,sort_order:13,
+    title:'療癒不是直線前進的',
+    quote:'療癒有時候看起來像退步。你重新感受那些傷，不是因為你失敗，而是因為你準備好了。',
+    reminder:'今天如果感覺在「退步」，試著重新框架：「我正在更深層地療癒。」',
+    reflection_question:'你的療癒旅程中，有什麼讓你以為是退步但其實是突破的時刻？',
+    author:'Her Aurora',tags:['療癒','非線性','突破']},
+  { id:'em_014',theme:'emotion',visual_style:'gold',is_premium:false,sort_order:14,
+    title:'感受當下的美好也是療癒',
+    quote:'療癒不只發生在面對傷痛時，也發生在你允許自己感受快樂、美麗和喜悅的時候。',
+    reminder:'今天有意識地停下來，感受一個讓你喜悅的小事物。',
+    reflection_question:'你上一次真正感受到喜悅是什麼時候？是什麼讓你可以感受到那份喜悅？',
+    author:'Her Aurora',tags:['喜悅','療癒','當下']},
+  { id:'em_015',theme:'emotion',visual_style:'mist',is_premium:false,sort_order:15,
+    title:'孤單感是靈魂的渴望',
+    quote:'孤單感不只是需要人陪，更是靈魂渴望深度連結的訊號——包括與自己的連結。',
+    reminder:'今天在感到孤單時，試著與自己深度連結，而不只是尋找陪伴。',
+    reflection_question:'你的孤單感通常在什麼情況下最強烈？那個孤單在渴望什麼？',
+    author:'Her Aurora',tags:['孤單','連結','靈魂']},
+  { id:'em_016',theme:'emotion',visual_style:'rose',is_premium:false,sort_order:16,
+    title:'羞恥感是謊言',
+    quote:'羞恥感告訴你「你是壞的」，而罪惡感告訴你「你做了壞事」。只有後者才是真的。',
+    reminder:'今天觀察：有沒有一種羞恥感讓你覺得「自己是問題」？試著把它改成「我做了什麼可以改變？」',
+    reflection_question:'你有什麼關於自己的羞恥感，讓你長期以來都在藏著？',
+    author:'Her Aurora',tags:['羞恥','罪惡感','療癒']},
+  { id:'em_017',theme:'emotion',visual_style:'aurora',is_premium:false,sort_order:17,
+    title:'界限保護你的情緒能量',
+    quote:'沒有情緒界限，你就像一個沒有牆的房子——所有人的情緒天氣都直接進來了。',
+    reminder:'今天練習一個情緒界限：當某人的情緒讓你不舒服，清晰地說出你的感受。',
+    reflection_question:'你在情緒上的界限在哪裡？你最容易被誰的情緒「淹沒」？',
+    author:'Her Aurora',tags:['情緒界限','保護','能量']},
+  { id:'em_018',theme:'emotion',visual_style:'gold',is_premium:false,sort_order:18,
+    title:'書寫是情緒的煉金術',
+    quote:'把感受寫下來，是把混沌轉化為清晰的過程。寫作不只是記錄，是療癒。',
+    reminder:'今天花十分鐘寫下你現在的感受，不需要邏輯，只需要誠實。',
+    reflection_question:'你上一次書寫自己的內心世界是什麼時候？那給了你什麼？',
+    author:'Her Aurora',tags:['書寫','療癒','清晰']},
+  { id:'em_019',theme:'emotion',visual_style:'mist',is_premium:false,sort_order:19,
+    title:'接受幫助也是力量',
+    quote:'認為「我應該自己處理」，有時是驕傲，有時是過去沒有人幫助你的傷痕。',
+    reminder:'今天允許自己接受一個幫助，不需要說「沒關係，我自己來」。',
+    reflection_question:'你最難開口請求幫助的情況是什麼？那個困難說明什麼？',
+    author:'Her Aurora',tags:['接受幫助','脆弱','療癒']},
+  { id:'em_020',theme:'emotion',visual_style:'rose',is_premium:false,sort_order:20,
+    title:'情緒智慧是可以學習的',
+    quote:'情緒不是你天生的弱點，情緒智慧是可以練習、可以成長的能力。',
+    reminder:'今天做一個提升情緒智慧的練習：覺察、命名、感受、釋放。',
+    reflection_question:'你的情緒智慧在哪個方面最需要成長？你願意投入練習嗎？',
+    author:'Her Aurora',tags:['情緒智慧','學習','成長']},
+
+  // ═══════════════════════════════════════════════════════
+  // 夢想行動 (20)
+  // ═══════════════════════════════════════════════════════
+  { id:'dr_001',theme:'dream',visual_style:'aurora',is_premium:false,sort_order:1,
+    title:'夢想不需要等準備好',
+    quote:'完美的時機不會來。你唯一能做的，就是帶著現在的自己，開始。',
+    reminder:'今天做夢想清單上最小的一個行動——小到不可能失敗的那種。',
+    reflection_question:'你在等什麼「準備好」才開始？那個等待已經花了多久？',
+    author:'Her Aurora',tags:['行動','夢想','開始']},
+  { id:'dr_002',theme:'dream',visual_style:'gold',is_premium:false,sort_order:2,
+    title:'你的夢想是指南針',
+    quote:'夢想不只是目的地，它是每一個當下的方向感——你現在的選擇是否對準它？',
+    reminder:'今天做一個「對準夢想」的選擇，哪怕只是5分鐘的行動。',
+    reflection_question:'你今天最大的一個選擇，把你帶向還是帶離你的夢想？',
+    author:'Her Aurora',tags:['夢想','方向','選擇']},
+  { id:'dr_003',theme:'dream',visual_style:'rose',is_premium:false,sort_order:3,
+    title:'恐懼是夢想的守門人',
+    quote:'恐懼不是說「不要去」，她是說「這對你很重要，所以我才來」。',
+    reminder:'今天識別出一個阻止你前進的恐懼，並對它說：「我看見你了。」',
+    reflection_question:'你現在最大的恐懼是什麼？如果克服了它，生命會有什麼不同？',
+    author:'Her Aurora',tags:['恐懼','夢想','榮格']},
+  { id:'dr_004',theme:'dream',visual_style:'aurora',is_premium:false,sort_order:4,
+    title:'每一步都算數',
+    quote:'你看不見終點，但你的每一步都在創造路徑——走著，路就出現了。',
+    reminder:'今天回顧一個你已經走過的步驟，承認它是有意義的。',
+    reflection_question:'你現在走的這一步，五年後的你會如何看待它？',
+    author:'Her Aurora',tags:['行動','積累','過程']},
+  { id:'dr_005',theme:'dream',visual_style:'gold',is_premium:false,sort_order:5,
+    title:'你的夢想也需要你',
+    quote:'夢想在等你。不是完美的你、準備好的你——就是現在這個你。',
+    reminder:'今天寫下三個月後你希望說出的一句話：「我做到了⋯⋯」',
+    reflection_question:'如果你的夢想能說話，它現在最想對你說什麼？',
+    author:'Her Aurora',tags:['夢想','行動','時間']},
+  { id:'dr_006',theme:'dream',visual_style:'rose',is_premium:false,sort_order:6,
+    title:'失敗是夢想的老師',
+    quote:'你每一次沒有成功，都是在收集「下次怎麼做更好」的資料。失敗是研究，不是結局。',
+    reminder:'今天把一個過去的「失敗」，重新解讀為一個珍貴的學習。',
+    reflection_question:'你最害怕在追求夢想的路上失敗的，是什麼樣的失敗？那背後是什麼？',
+    author:'Her Aurora',tags:['失敗','學習','重框']},
+  { id:'dr_007',theme:'dream',visual_style:'aurora',is_premium:false,sort_order:7,
+    title:'夢想需要被說出口',
+    quote:'你把夢想放在心裡藏著，它就只是個夢。說出口，它就有了成真的第一步。',
+    reminder:'今天把一個你沒說過的夢想，告訴一個你信任的人。',
+    reflection_question:'你有什麼夢想從來沒有說出口？是什麼讓你藏著它？',
+    author:'Her Aurora',tags:['表達','夢想','信任']},
+  { id:'dr_008',theme:'dream',visual_style:'gold',is_premium:false,sort_order:8,
+    title:'清晰的夢想讓機會顯現',
+    quote:'當你非常清楚自己想要什麼，你的大腦就會開始注意到原本忽略的機會。',
+    reminder:'今天把一個模糊的夢想，變得更具體：具體的畫面、具體的日期、具體的感受。',
+    reflection_question:'你最大的夢想現在有多清晰？你能用一句話說清楚嗎？',
+    author:'Her Aurora',tags:['清晰','目標','聚焦']},
+  { id:'dr_009',theme:'dream',visual_style:'mist',is_premium:false,sort_order:9,
+    title:'環境塑造你的夢想高度',
+    quote:'你身邊的人決定了你覺得什麼是「可能的」。選擇讓你的夢想感覺可行的環境和人。',
+    reminder:'今天思考：你身邊的人在擴展還是限制你對夢想的想像？',
+    reflection_question:'你身邊的哪些人最能支持你的夢想？你和他們相處的時間夠嗎？',
+    author:'Her Aurora',tags:['環境','支持','可能性']},
+  { id:'dr_010',theme:'dream',visual_style:'rose',is_premium:false,sort_order:10,
+    title:'耐心是夢想的護衛',
+    quote:'大多數值得擁有的夢想，都比你預期的需要更多時間。耐心不是等待，是在等待中持續行動。',
+    reminder:'今天對你的夢想時間線，練習多一點耐心——同時繼續做今天能做的事。',
+    reflection_question:'你現在對實現夢想的時間線感到焦慮嗎？那個焦慮有幫助嗎？',
+    author:'Her Aurora',tags:['耐心','時間','持續']},
+  { id:'dr_011',theme:'dream',visual_style:'aurora',is_premium:false,sort_order:11,
+    title:'小習慣是大夢想的基礎',
+    quote:'宏大的夢想是由每一個微小的日常行動累積而成的。今天的小習慣，就是明天的大成就。',
+    reminder:'今天建立或強化一個和你夢想相關的小習慣，哪怕只有五分鐘。',
+    reflection_question:'你有哪些日常習慣，正在幫助你的夢想成真？有哪些在阻礙它？',
+    author:'Her Aurora',tags:['習慣','積累','基礎']},
+  { id:'dr_012',theme:'dream',visual_style:'gold',is_premium:false,sort_order:12,
+    title:'夢想值得你的時間和金錢',
+    quote:'你在夢想上投入的時間和金錢，反映了你對它的真實重視程度。',
+    reminder:'今天在你的夢想上做一個具體的投資：時間、金錢、或學習。',
+    reflection_question:'你上週花在夢想上的時間有多少？那個數字讓你滿意嗎？',
+    author:'Her Aurora',tags:['投資','優先順序','行動']},
+  { id:'dr_013',theme:'dream',visual_style:'rose',is_premium:false,sort_order:13,
+    title:'被拒絕是篩選的過程',
+    quote:'每一個「不」都讓你更靠近那個真正說「是」的人或機會。拒絕是過濾，不是終結。',
+    reminder:'今天把最近一個讓你難受的「拒絕」，重新詮釋為「這不是對的匹配」。',
+    reflection_question:'你最難面對的拒絕是哪一種？那個難受說明了什麼對你最重要？',
+    author:'Her Aurora',tags:['拒絕','韌性','篩選']},
+  { id:'dr_014',theme:'dream',visual_style:'aurora',is_premium:false,sort_order:14,
+    title:'你的過去是夢想的燃料',
+    quote:'你所有的經歷，包括最難的那些，都在為你的夢想提供獨特的素材和力量。',
+    reminder:'今天找出一個過去的困難經歷，思考它如何成為你夢想的一部分。',
+    reflection_question:'你的哪個人生經歷，讓你的夢想變得更獨特、更有意義？',
+    author:'Her Aurora',tags:['過去','燃料','獨特']},
+  { id:'dr_015',theme:'dream',visual_style:'mist',is_premium:false,sort_order:15,
+    title:'找到你的同行者',
+    quote:'獨行快，眾行遠。找到和你有相似夢想和價值觀的人，彼此支持，走得更遠。',
+    reminder:'今天主動聯繫一個在追求類似夢想的人，分享你的進度或請教他們。',
+    reflection_question:'在你的夢想路上，你有同行者嗎？你在哪裡可以找到他們？',
+    author:'Her Aurora',tags:['同伴','支持','共行']},
+  { id:'dr_016',theme:'dream',visual_style:'gold',is_premium:false,sort_order:16,
+    title:'停止追逐別人的夢想',
+    quote:'最痛苦的生活，是為了別人期待的夢想而活。找到你自己的，即使它和別人的不一樣。',
+    reminder:'今天問自己：我現在追求的，真的是我想要的，還是我「應該」想要的？',
+    reflection_question:'你現在的夢想有多少是真正屬於你自己的？有多少是別人期待的？',
+    author:'Her Aurora',tags:['真實','自己的夢想','釐清']},
+  { id:'dr_017',theme:'dream',visual_style:'rose',is_premium:false,sort_order:17,
+    title:'慶祝每一個里程碑',
+    quote:'只盯著終點而忘記慶祝每一個里程碑，會讓旅程變得痛苦而非喜悅。',
+    reminder:'今天找一個在夢想路上值得慶祝的小成就，好好為自己喝采。',
+    reflection_question:'你上一次為自己在夢想路上的進步慶祝是什麼時候？',
+    author:'Her Aurora',tags:['慶祝','里程碑','喜悅']},
+  { id:'dr_018',theme:'dream',visual_style:'aurora',is_premium:false,sort_order:18,
+    title:'夢想在行動中變得清晰',
+    quote:'不要等到完全想清楚才開始行動。很多時候，只有在行動中，夢想才會變得更清晰。',
+    reminder:'今天先行動，再思考——選一個小行動，做了再說。',
+    reflection_question:'你有沒有因為「想清楚了再說」而遲遲沒有開始的夢想？',
+    author:'Her Aurora',tags:['行動','清晰','起步']},
+  { id:'dr_019',theme:'dream',visual_style:'gold',is_premium:false,sort_order:19,
+    title:'你的夢想改變世界',
+    quote:'每一個大的社會改變，都始於某個人對更美好世界的夢想。你的夢想也在改變世界。',
+    reminder:'今天思考：我的夢想如何讓周圍的世界變得更好？那讓我更有動力嗎？',
+    reflection_question:'你的夢想如何和讓世界更好連結？那個連結能成為你的動力嗎？',
+    author:'Her Aurora',tags:['影響','使命','世界']},
+  { id:'dr_020',theme:'dream',visual_style:'mist',is_premium:false,sort_order:20,
+    title:'今天就是開始的最好時機',
+    quote:'你想開始的那天永遠是今天。明天也會有理由等後天。就是現在，就是今天。',
+    reminder:'今天對你最想開始但一直在延遲的事，做一個最小的開始行動。',
+    reflection_question:'如果你知道一定會成功，你今天就會開始做的是什麼？',
+    author:'Her Aurora',tags:['現在','開始','行動']},
+
+  // ═══════════════════════════════════════════════════════
+  // 今日提醒 (20)
+  // ═══════════════════════════════════════════════════════
+  { id:'daily_001',theme:'daily',visual_style:'rose',is_premium:false,sort_order:1,
+    title:'今天，你已經夠了',
+    quote:'不是因為你做了什麼，而是因為你是你——今天，你已經夠了。',
+    reminder:'今天不需要比昨天好，只需要繼續做你自己。',
+    reflection_question:'今天你最需要給自己的一句話是什麼？',
+    author:'Her Aurora',tags:['每日','自我接納']},
+  { id:'daily_002',theme:'daily',visual_style:'gold',is_premium:false,sort_order:2,
+    title:'深呼吸，然後繼續',
+    quote:'在一切開始之前，先深呼吸一次。那一秒的停頓，是你給自己最好的準備。',
+    reminder:'今天，每次感到緊繃，先深呼三次再回應。',
+    reflection_question:'今天你最需要暫停和呼吸的時刻是什麼？',
+    author:'Her Aurora',tags:['呼吸','當下','靜心']},
+  { id:'daily_003',theme:'daily',visual_style:'aurora',is_premium:false,sort_order:3,
+    title:'帶著善意醒來',
+    quote:'今天帶著一個意圖醒來：我要對遇見的每個人（包括我自己）多一分善意。',
+    reminder:'今天主動給出一個你通常「想給但沒說」的讚美或感謝。',
+    reflection_question:'今天你希望自己帶給世界什麼？',
+    author:'Her Aurora',tags:['善意','意圖','每日']},
+  { id:'daily_004',theme:'daily',visual_style:'mist',is_premium:false,sort_order:4,
+    title:'此刻就是你的答案',
+    quote:'你不需要解決所有的事，只需要對此刻誠實。此刻，你在哪裡？需要什麼？',
+    reminder:'今天花兩分鐘和自己在一起，不看手機，只是感受現在。',
+    reflection_question:'此刻你的內心是什麼顏色？什麼溫度？什麼形狀？',
+    author:'Her Aurora',tags:['當下','正念','覺察']},
+  { id:'daily_005',theme:'daily',visual_style:'rose',is_premium:false,sort_order:5,
+    title:'今天你選擇如何存在？',
+    quote:'每一天，你都在無聲地問：我要用什麼方式活在這個世界上？今天，你的答案是？',
+    reminder:'今天選擇一個字作為你的意圖：溫柔、勇敢、好奇、開放……',
+    reflection_question:'如果今天只能留下一個印記，你希望那是什麼？',
+    author:'Her Aurora',tags:['意圖','選擇','每日']},
+  { id:'daily_006',theme:'daily',visual_style:'gold',is_premium:false,sort_order:6,
+    title:'把今天活得有意識',
+    quote:'很多天就這樣過去了，沒有留下任何痕跡。今天，試著有意識地活著。',
+    reminder:'今天在一個你通常「自動駕駛」的時刻，有意識地停下來感受。',
+    reflection_question:'今天什麼時刻你最容易「自動駕駛」？如果那時你醒著，會注意到什麼？',
+    author:'Her Aurora',tags:['意識','當下','覺知']},
+  { id:'daily_007',theme:'daily',visual_style:'aurora',is_premium:false,sort_order:7,
+    title:'感謝是今天最好的開始',
+    quote:'把注意力放在你擁有的，而非你缺少的——光是這個轉換，就能改變整個一天的品質。',
+    reminder:'今天早晨說出或寫下三件你感謝的事，越具體越好。',
+    reflection_question:'今天你最感謝的三件事是什麼？它們在你生命中佔多少份量？',
+    author:'Her Aurora',tags:['感謝','豐盛','開始']},
+  { id:'daily_008',theme:'daily',visual_style:'mist',is_premium:false,sort_order:8,
+    title:'慢一點，感受多一點',
+    quote:'快速的生活讓你完成更多事，但慢下來讓你感受更多。兩者都需要，但平衡需要練習。',
+    reminder:'今天選一件事慢慢做，全程感受它——喝咖啡、走路、或洗碗。',
+    reflection_question:'你的生活節奏目前對你來說是否合適？你想在哪裡慢下來？',
+    author:'Her Aurora',tags:['慢下來','感受','平衡']},
+  { id:'daily_009',theme:'daily',visual_style:'rose',is_premium:false,sort_order:9,
+    title:'今天允許自己不完美',
+    quote:'你不需要把每件事都做到最好，才值得安心。今天，完成比完美更重要。',
+    reminder:'今天允許自己把一件事做到「夠好」就好，不追求完美。',
+    reflection_question:'你今天在哪件事上對自己要求「完美」？那個要求值得嗎？',
+    author:'Her Aurora',tags:['不完美','放鬆','夠好']},
+  { id:'daily_010',theme:'daily',visual_style:'gold',is_premium:false,sort_order:10,
+    title:'今天說一個真話',
+    quote:'在我們的生活中，我們說了太多「沒事」「還好」「都可以」。今天，說一個真話。',
+    reminder:'今天有一次，誠實回答「你怎麼樣」這個問題。',
+    reflection_question:'今天你最想說但可能沒說的真話是什麼？',
+    author:'Her Aurora',tags:['誠實','真話','勇氣']},
+  { id:'daily_011',theme:'daily',visual_style:'aurora',is_premium:false,sort_order:11,
+    title:'你今天的心情是天氣，不是你',
+    quote:'好的心情不代表你是好人，壞的心情不代表你是壞人。心情只是今天的天氣，不是你的身份。',
+    reminder:'今天當情緒起伏時，試著說：「我現在感到⋯⋯，但這不是全部的我。」',
+    reflection_question:'今天你的「情緒天氣」如何？你能不被它定義嗎？',
+    author:'Her Aurora',tags:['情緒','觀察者','不認同']},
+  { id:'daily_012',theme:'daily',visual_style:'mist',is_premium:false,sort_order:12,
+    title:'今天做一件讓靈魂喜悅的事',
+    quote:'在忙碌中，別忘了做一件不是因為「應該」，而是因為「喜歡」的事。',
+    reminder:'今天安排十分鐘做一件純粹讓你喜悅的事，不需要任何理由。',
+    reflection_question:'今天什麼事情讓你感到靈魂的喜悅？你多久做一次這樣的事？',
+    author:'Her Aurora',tags:['喜悅','靈魂','玩耍']},
+  { id:'daily_013',theme:'daily',visual_style:'rose',is_premium:false,sort_order:13,
+    title:'連接大自然重置你的系統',
+    quote:'當你感到疲憊和失衡，自然界有一種讓系統重置的力量。去找一片綠色、一縷陽光。',
+    reminder:'今天走出去，哪怕只有五分鐘，感受一下自然的存在。',
+    reflection_question:'你上一次真正感受大自然是什麼時候？那給了你什麼？',
+    author:'Her Aurora',tags:['自然','重置','療癒']},
+  { id:'daily_014',theme:'daily',visual_style:'gold',is_premium:false,sort_order:14,
+    title:'今天對陌生人微笑',
+    quote:'一個微笑可能在某個人最難的一天裡，成為他們記得的一件好事。善意是有傳染力的。',
+    reminder:'今天主動對一個陌生人微笑或說一句善意的話。',
+    reflection_question:'你上一次被陌生人的善意感動是什麼時候？你還記得那是什麼嗎？',
+    author:'Her Aurora',tags:['善意','微笑','連結']},
+  { id:'daily_015',theme:'daily',visual_style:'aurora',is_premium:false,sort_order:15,
+    title:'今天的你足以應對今天',
+    quote:'你不需要有未來的所有答案，才能走過今天。今天的你，足以應對今天的挑戰。',
+    reminder:'今天把注意力收回到「今天能做的事」，放下對未來的焦慮。',
+    reflection_question:'你現在的焦慮有多少是關於「今天」的，有多少是關於未來的？',
+    author:'Her Aurora',tags:['當下','足夠','焦慮']},
+  { id:'daily_016',theme:'daily',visual_style:'mist',is_premium:false,sort_order:16,
+    title:'給自己一個擁抱',
+    quote:'我們常常給別人安慰，卻忘了給自己。今天，做你自己最需要的那個人。',
+    reminder:'今天給自己一個隱喻的擁抱：一句鼓勵、一杯熱飲、或一個休息。',
+    reflection_question:'今天你需要什麼樣的安慰或照顧，而你還沒有給自己的？',
+    author:'Her Aurora',tags:['自我關懷','擁抱','照顧']},
+  { id:'daily_017',theme:'daily',visual_style:'rose',is_premium:false,sort_order:17,
+    title:'今天記錄一個美好的片刻',
+    quote:'美好不會自動被記住，但被記錄下來的美好，會成為你在困難時回望的光。',
+    reminder:'今天記錄一個美好的片刻：一句話、一張照片、或一個感受。',
+    reflection_question:'如果你回顧今天，哪個片刻你最想保留？',
+    author:'Her Aurora',tags:['記錄','美好','感謝']},
+  { id:'daily_018',theme:'daily',visual_style:'gold',is_premium:false,sort_order:18,
+    title:'放下昨天，全心今天',
+    quote:'昨天已經結束了，它的錯誤和遺憾都不在今天這裡了。今天是全新的一頁。',
+    reminder:'今天在開始之前，有意識地說：「昨天已過，今天我全心在這裡。」',
+    reflection_question:'什麼昨天的事你帶著進入今天了？你願意放下它嗎？',
+    author:'Her Aurora',tags:['放下','重新開始','今天']},
+  { id:'daily_019',theme:'daily',visual_style:'aurora',is_premium:false,sort_order:19,
+    title:'今天做一件小善事',
+    quote:'不需要改變世界，只需要讓身邊的一個人今天好一點點。那就已經足夠了。',
+    reminder:'今天主動為某人做一件小事：幫個忙、傳一個鼓勵、或記住某人的名字。',
+    reflection_question:'今天你可以為誰做什麼小小的善事，讓他們的一天好一點？',
+    author:'Her Aurora',tags:['善事','貢獻','連結']},
+  { id:'daily_020',theme:'daily',visual_style:'mist',is_premium:false,sort_order:20,
+    title:'今天結束時，你做得很好',
+    quote:'無論今天發生了什麼，你撐過來了。每一個結束的今天，都值得一個「你做得很好」。',
+    reminder:'今天結束前，對自己說：「今天我做得很好，無論發生了什麼。」',
+    reflection_question:'今天結束時，你最想對自己說什麼？',
+    author:'Her Aurora',tags:['結束','肯定','每日']},
+]
+
+// ── State ──────────────────────────────────────────────────────────────────────
+let currentCard    = null
+let currentSource  = 'daily'   // 'daily' | 'theme'
+let favoriteIds    = new Set(JSON.parse(localStorage.getItem('ha_favs') || '[]'))
+let lastDrawDate   = localStorage.getItem('ha_last_draw') || ''
+let activeFilter   = 'all'
+let currentFormat  = 'ig_post'
+let showWatermark  = true
+let prevPage       = 'home'
+let cmCards        = []
+let cmIndex        = 0
+let cmSetupTheme   = 'women_growth'
+let cmShuffle      = true
+let timerInterval  = null
+let timerSeconds   = 0
+let timerRunning   = false
+
+// ── Init ───────────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  setDateLabel()
+  buildHomeThemeChips()
+  buildThemePage()
+  updateSharePage()
+
+  // Tab clicks
+  document.querySelectorAll('.tab').forEach(btn => {
+    btn.addEventListener('click', () => switchTab(btn.dataset.page))
+  })
+
+  // Check if already drawn today
+  const today = new Date().toISOString().slice(0,10)
+  if (lastDrawDate === today && currentCard) updateDailyCta(true)
+})
+
+function setDateLabel() {
+  const d = new Date()
+  const label = d.toLocaleDateString('zh-TW', { month:'long', day:'numeric', weekday:'long' })
+  document.getElementById('home-date').textContent = label
+}
+
+// ── Tab navigation ─────────────────────────────────────────────────────────────
+function switchTab(page) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.page === page))
+  document.querySelectorAll('.page').forEach(p => p.classList.toggle('active', p.id === `page-${page}`))
+  if (page === 'collection') renderCollection()
+  if (page === 'share') updateSharePage()
+}
+
+// ── Build home theme chips ─────────────────────────────────────────────────────
+function buildHomeThemeChips() {
+  const wrap = document.getElementById('home-theme-chips')
+  THEME_ORDER.forEach(theme => {
+    const m = THEME_META[theme]
+    const btn = document.createElement('button')
+    btn.className = 'theme-chip'
+    btn.innerHTML = `${m.emoji} ${m.label}`
+    btn.onclick = () => drawFromTheme(theme)
+    wrap.appendChild(btn)
+  })
+}
+
+// ── Build themes page ──────────────────────────────────────────────────────────
+function buildThemePage() {
+  const list = document.getElementById('theme-list')
+  THEME_ORDER.forEach(theme => {
+    const m      = THEME_META[theme]
+    const cards  = CARDS.filter(c => c.theme === theme)
+    const free   = cards.filter(c => !c.is_premium).length
+    const row    = document.createElement('div')
+    row.className = 'theme-row'
+    row.style.setProperty('--accent', m.color)
+    row.innerHTML = `
+      <div style="position:absolute;left:0;top:0;bottom:0;width:3px;background:${m.color}"></div>
+      <div class="theme-emoji-circle" style="background:${m.color}20">
+        <span>${m.emoji}</span>
+      </div>
+      <div class="theme-row-info">
+        <div class="theme-row-name">${m.label}</div>
+        <div class="theme-row-count">${free} 張免費 · ${cards.length - free} 張 PRO</div>
+      </div>
+      <div style="padding:2px 10px;border-radius:10px;background:${m.color}20;font-family:'DM Mono',monospace;font-size:10px;color:${m.color}">${cards.length}</div>
+      <span class="theme-row-arrow">›</span>
+    `
+    row.onclick = () => { drawFromTheme(theme); switchTab('home') }
+    list.appendChild(row)
+  })
+}
+
+// ── Daily card ─────────────────────────────────────────────────────────────────
+function getDailyCard() {
+  const today = new Date().toISOString().slice(0,10)
+  let hash = 0
+  for (let i = 0; i < today.length; i++) hash = (hash * 31 + today.charCodeAt(i)) | 0
+  const free = CARDS.filter(c => !c.is_premium)
+  return free[Math.abs(hash) % free.length]
+}
+
+function handleDailyCta() {
+  const card = getDailyCard()
+  const today = new Date().toISOString().slice(0,10)
+  lastDrawDate = today
+  localStorage.setItem('ha_last_draw', today)
+  showCard(card, 'daily')
+  updateDailyCta(true, card)
+}
+
+function updateDailyCta(drawn, card) {
+  const c = card || getDailyCard()
+  if (drawn) {
+    document.getElementById('daily-cta-label').textContent = "TODAY'S CARD"
+    document.getElementById('daily-cta-title').innerHTML = `<em style="font-family:'Cormorant Garamond',serif">${c.title}</em>`
+    document.getElementById('daily-cta-arrow').textContent = '重新閱讀 →'
+    document.getElementById('daily-cta').style.cursor = 'pointer'
+  }
+}
+
+// ── Draw from theme ────────────────────────────────────────────────────────────
+function drawFromTheme(theme) {
+  const pool = CARDS.filter(c => c.theme === theme && !c.is_premium)
+  if (!pool.length) return
+  const card = pool[Math.floor(Math.random() * pool.length)]
+  showCard(card, 'theme')
+}
+
+function drawAgain() {
+  if (!currentCard) return
+  const pool = CARDS.filter(c => c.theme === currentCard.theme && !c.is_premium && c.id !== currentCard.id)
+  if (!pool.length) { showToast('已是這個主題的最後一張') ; return }
+  const card = pool[Math.floor(Math.random() * pool.length)]
+  showCard(card, currentSource)
+}
+
+// ── Show card detail ───────────────────────────────────────────────────────────
+function showCard(card, source) {
+  currentCard   = card
+  currentSource = source
+  prevPage      = 'home'
+
+  const m   = THEME_META[card.theme]
+  const grad = AURORA_GRADS[card.visual_style] || AURORA_GRADS.rose
+
+  // Background gradient
+  document.getElementById('card-bg').style.background = grad
+
+  // Content
+  document.getElementById('card-theme-label').innerHTML =
+    `<span style="font-size:14px">${m.emoji}</span><span style="color:${m.color}">${m.label.toUpperCase()}</span>`
+  document.getElementById('card-divider-el').style.background = m.color
+  document.getElementById('card-title-sm').textContent = card.title
+  document.getElementById('card-quote').textContent = `「${card.quote}」`
+  document.getElementById('card-reminder').textContent = card.reminder
+  document.getElementById('card-refl-label').style.color = m.color
+  document.getElementById('card-refl-text').textContent = card.reflection_question
+  document.getElementById('card-author').textContent = card.author ? `— ${card.author}` : ''
+  document.getElementById('detail-theme').textContent = `${m.emoji} ${m.label}`
+  document.getElementById('detail-card-title').textContent = card.title
+  document.getElementById('card-detail-source-label').textContent =
+    source === 'daily' ? '今日金句卡' : `${m.label} · 主題抽卡`
+  document.getElementById('draw-again-wrap').style.display =
+    source === 'theme' ? 'block' : 'none'
+
+  // Tags
+  const tagsEl = document.getElementById('card-tags')
+  tagsEl.innerHTML = card.tags.map(t =>
+    `<span style="padding:4px 12px;border-radius:20px;border:0.5px solid rgba(255,255,255,0.15);font-size:11px;color:rgba(255,255,255,0.45)"># ${t}</span>`
+  ).join('')
+
+  // Favorite state
+  updateFavBtn()
+
+  // Flip animation
+  const cardEl = document.getElementById('main-card')
+  cardEl.classList.remove('flip-in')
+  void cardEl.offsetWidth
+  cardEl.classList.add('flip-in')
+
+  // Switch page
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'))
+  document.getElementById('page-card').classList.add('active')
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'))
+  document.querySelector('[data-page="home"]').classList.add('active')
+}
+
+function goBack() {
+  switchTab(prevPage)
+}
+
+// ── Favorite ───────────────────────────────────────────────────────────────────
+function toggleFavorite() {
+  if (!currentCard) return
+  if (favoriteIds.has(currentCard.id)) {
+    favoriteIds.delete(currentCard.id)
+    showToast('已取消收藏')
+  } else {
+    if (favoriteIds.size >= 20) { showToast('收藏已達 20 張上限，升級 PRO 可無限收藏') ; return }
+    favoriteIds.add(currentCard.id)
+    showToast('✦ 已加入收藏')
+  }
+  localStorage.setItem('ha_favs', JSON.stringify([...favoriteIds]))
+  updateFavBtn()
+}
+
+function updateFavBtn() {
+  const btn = document.getElementById('fav-btn')
+  if (!btn || !currentCard) return
+  const isFav = favoriteIds.has(currentCard.id)
+  btn.textContent = isFav ? '❤️ 已收藏' : '🤍 收藏'
+  btn.classList.toggle('favorited', isFav)
+}
+
+// ── Collection page ────────────────────────────────────────────────────────────
+function renderCollection() {
+  const favCards= CARDS.filter(c => favoriteIds.has(c.id))
+
+  // Usage bar
+  const pct = Math.min(100, favCards.length / 20 * 100)
+  document.getElementById('usage-fill').style.width = pct + '%'
+  document.getElementById('usage-label').textContent = `${favCards.length} / 20 張`
+
+  // Filter chips
+  const filtersEl = document.getElementById('collection-filters')
+  filtersEl.innerHTML = ''
+  const themesWithFavs = THEME_ORDER.filter(t => favCards.some(c => c.theme === t))
+  const chips = [{ id:'all', label:`全部 (${favCards.length})` },
+    ...themesWithFavs.map(t => ({ id:t, label:`${THEME_META[t].emoji} ${THEME_META[t].label} (${favCards.filter(c=>c.theme===t).length})` }))]
+  chips.forEach(chip => {
+    const el = document.createElement('button')
+    el.className = `filter-chip${activeFilter === chip.id ? ' active' : ''}`
+    el.textContent = chip.label
+    el.onclick = () => { activeFilter = chip.id; renderCollection() }
+    filtersEl.appendChild(el)
+  })
+
+  // Content
+  const content = document.getElementById('collection-content')
+  const filtered = activeFilter === 'all' ? favCards : favCards.filter(c => c.theme === activeFilter)
+  if (filtered.length === 0) {
+    const emoji = activeFilter === 'all' ? '🤍' : (THEME_META[activeFilter] ? THEME_META[activeFilter].emoji : '🎴')
+    content.innerHTML = `<div class="empty-state">
+      <div class="empty-emoji">${emoji}</div>
+      <div class="empty-title">${activeFilter === 'all' ? '還沒有收藏' : '這個主題尚無收藏'}</div>
+      <div class="empty-desc">${activeFilter === 'all' ? '抽到喜歡的卡片時，點擊愛心收藏，在這裡隨時重溫。' : '切換其他主題篩選，或前往抽卡收藏更多。'}</div>
+    </div>`
+    return
+  }
+  content.innerHTML = `<div class="card-grid">${filtered.map(card => {
+    const m = THEME_META[card.theme]
+    const grad = AURORA_GRADS[card.visual_style] || AURORA_GRADS.rose
+    return `<div class="mini-card" style="background:${grad}" onclick="showCard(CARDS.find(c=>c.id==='${card.id}'),'collection')">
+      <div class="mini-card-theme" style="color:${m.color}">${m.emoji} ${m.label}</div>
+      <div class="mini-card-quote">${card.quote.slice(0,60)}${card.quote.length>60?'…':''}</div>
+      <div class="mini-card-title">${card.title}</div>
+      <button class="mini-card-remove" onclick="event.stopPropagation();removeFav('${card.id}')">✕</button>
+    </div>`
+  }).join('')}</div>`
+}
+
+function removeFav(id) {
+  favoriteIds.delete(id)
+  localStorage.setItem('ha_favs', JSON.stringify([...favoriteIds]))
+  showToast('已從收藏移除')
+  renderCollection()
+}
+
+function updateSharePage() {
+  const hasCard = !!currentCard
+  document.getElementById('share-no-card-hint').style.display = hasCard ? 'none' : 'block'
+  if (!hasCard) {
+    document.getElementById('share-card-bg').style.background = 'linear-gradient(150deg,#2E3F6E,#7B4F9E)'
+    return
+  }
+  const card = currentCard
+  const m    = THEME_META[card.theme]
+  const grad = AURORA_GRADS[card.visual_style] || AURORA_GRADS.rose
+  document.getElementById('share-card-bg').style.cssText = `background:${grad};position:absolute;inset:0`
+  document.getElementById('share-theme-label').innerHTML = `<span style="color:${m.color}">${m.emoji} ${m.label.toUpperCase()}</span>`
+  document.getElementById('share-divider').style.background = m.color
+  document.getElementById('share-quote').textContent = `「${card.quote}」`
+  document.getElementById('share-reminder').textContent = card.reminder
+  document.getElementById('share-author').textContent = card.author ? `— ${card.author}` : ''
+  document.getElementById('share-watermark-label').style.display = showWatermark ? 'inline-block' : 'none'
+  document.getElementById('share-preview-box').style.aspectRatio = currentFormat === 'ig_story' ? '9/16' : '1/1'
+  // format badge removed
+}
+
+function selectFormat(fmt, el) {
+  currentFormat = fmt
+  document.querySelectorAll('.format-opt').forEach(o => o.classList.remove('active'))
+  el.classList.add('active')
+  updateSharePage()
+}
+
+function toggleWatermark(btn) {
+  showWatermark = !showWatermark
+  btn.classList.toggle('on', showWatermark)
+  updateSharePage()
+}
+
+function handleShareAction(type) {
+  if (!currentCard) { showToast('請先抽一張卡片'); return }
+  if (type === 'save') {
+    downloadCardAsPng()
+  } else if (type === 'ig') {
+    downloadCardAsPng()
+    setTimeout(() => showToast('已下載圖卡，請在 Instagram 上傳 ✦'), 800)
+  } else if (type === 'line') {
+    downloadCardAsPng()
+    setTimeout(() => showToast('已下載圖卡，請於 LINE 傳送 ✦'), 800)
+  }
+}
+
+// ── Real PNG download via Canvas ───────────────────────────────────────────────
+async function downloadCardAsPng() {
+  if (!currentCard) return
+  showToast('✦ 正在生成圖卡⋯⋯')
+
+  const card = currentCard
+  const m    = THEME_META[card.theme]
+  const isStory = currentFormat === 'ig_story'
+  const W = 1080
+  const H = isStory ? 1920 : 1080
+
+  // Create canvas
+  const canvas = document.createElement('canvas')
+  canvas.width = W; canvas.height = H
+  const ctx = canvas.getContext('2d')
+
+  // ── Aurora gradient background (per visual_style) ──
+  const gradStops = {
+    rose:   [['#7B4F9E', 0], ['#C45C9B', 0.5], ['#F26B6B', 1]],
+    gold:   [['#C45C9B', 0], ['#F4874B', 0.55], ['#F5A623', 1]],
+    mist:   [['#0D2733', 0], ['#2E3F6E', 0.55], ['#7B4F9E', 1]],
+    aurora: [['#2E3F6E', 0], ['#7B4F9E', 0.45], ['#C45C9B', 1]],
+  }
+  const stops = gradStops[card.visual_style] || gradStops.rose
+  const grad = ctx.createLinearGradient(0, 0, W, H)
+  stops.forEach(([color, pos]) => grad.addColorStop(pos, color))
+  ctx.fillStyle = grad
+  ctx.fillRect(0, 0, W, H)
+
+  // ── Subtle dark overlay for text legibility ──
+  const overlay = ctx.createLinearGradient(0, 0, 0, H)
+  overlay.addColorStop(0, 'rgba(0,0,0,0)')
+  overlay.addColorStop(1, 'rgba(0,0,0,0.15)')
+  ctx.fillStyle = overlay
+  ctx.fillRect(0, 0, W, H)
+
+  // ── Layout constants ──
+  const pad = isStory ? 100 : 90
+  let y = isStory ? 240 : 160
+
+  // ── Theme label (top) ──
+  ctx.fillStyle = m.color
+  ctx.font = `600 ${isStory ? 28 : 26}px "DM Mono", monospace`
+  ctx.textAlign = 'left'
+  const themeText = `${m.emoji}  ${m.label.toUpperCase()}`
+  ctx.fillText(themeText, pad, y)
+  y += isStory ? 60 : 50
+
+  // ── Divider line ──
+  ctx.strokeStyle = m.color
+  ctx.lineWidth = 2
+  ctx.beginPath()
+  ctx.moveTo(pad, y)
+  ctx.lineTo(pad + 80, y)
+  ctx.stroke()
+  y += isStory ? 70 : 60
+
+  // ── Card title (small) ──
+  ctx.fillStyle = 'rgba(255,255,255,0.55)'
+  ctx.font = `400 ${isStory ? 30 : 28}px "Noto Sans TC", sans-serif`
+  ctx.fillText(card.title, pad, y)
+  y += isStory ? 80 : 70
+
+  // ── Main quote (hero text) ──
+  ctx.fillStyle = '#FEFCF8'
+  const quoteSize = isStory ? 62 : 56
+  ctx.font = `italic 400 ${quoteSize}px "Cormorant Garamond", serif`
+  const quoteText = `「${card.quote}」`
+  y = wrapText(ctx, quoteText, pad, y, W - pad * 2, quoteSize * 1.55)
+  y += isStory ? 60 : 40
+
+  // ── Reminder ──
+  ctx.fillStyle = 'rgba(255,255,255,0.72)'
+  const remSize = isStory ? 32 : 30
+  ctx.font = `300 ${remSize}px "Noto Sans TC", sans-serif`
+  y = wrapText(ctx, card.reminder, pad, y, W - pad * 2, remSize * 1.75)
+  y += isStory ? 60 : 50
+
+  // ── Reflection box ──
+  const boxX = pad, boxW = W - pad * 2
+  const boxY = y
+  const reflLabel = '✦  反思'
+  const reflSize = isStory ? 30 : 28
+  ctx.fillStyle = 'rgba(255,255,255,0.08)'
+  // Measure reflection text height first
+  ctx.font = `italic 400 ${reflSize}px "Cormorant Garamond", serif`
+  const reflLines = measureWrappedLines(ctx, card.reflection_question, boxW - 60)
+  const boxH = 60 + reflLines * reflSize * 1.55 + 30
+  roundRect(ctx, boxX, boxY, boxW, boxH, 18)
+  ctx.fill()
+
+  // Reflection label inside box
+  ctx.fillStyle = m.color
+  ctx.font = `600 ${isStory ? 22 : 20}px "DM Mono", monospace`
+  ctx.fillText(reflLabel, boxX + 30, boxY + 38)
+
+  // Reflection question
+  ctx.fillStyle = 'rgba(255,255,255,0.85)'
+  ctx.font = `italic 400 ${reflSize}px "Cormorant Garamond", serif`
+  wrapText(ctx, card.reflection_question, boxX + 30, boxY + 80, boxW - 60, reflSize * 1.55)
+
+  // ── Footer: author + brand watermark ──
+  const footerY = H - (isStory ? 120 : 100)
+
+  if (card.author) {
+    ctx.fillStyle = 'rgba(255,255,255,0.4)'
+    ctx.font = `400 ${isStory ? 26 : 24}px "Noto Sans TC", sans-serif`
+    ctx.textAlign = 'left'
+    ctx.fillText(`— ${card.author}`, pad, footerY)
+  }
+
+  if (showWatermark) {
+    ctx.fillStyle = 'rgba(255,255,255,0.12)'
+    const wmText = '@herauroratw'
+    ctx.font = `500 ${isStory ? 24 : 22}px "DM Mono", monospace`
+    const wmW = ctx.measureText(wmText).width + 36
+    const wmH = isStory ? 44 : 40
+    const wmX = W - pad - wmW
+    const wmY = footerY - wmH * 0.7
+    roundRect(ctx, wmX, wmY, wmW, wmH, wmH / 2)
+    ctx.fill()
+    ctx.fillStyle = '#FDD08A'
+    ctx.textAlign = 'center'
+    ctx.fillText(wmText, wmX + wmW / 2, wmY + wmH * 0.65)
+  }
+
+  // ── Trigger download ──
+  canvas.toBlob((blob) => {
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    const date = new Date().toISOString().slice(0,10)
+    a.href = url
+    a.download = `her-aurora-${card.id}-${currentFormat}-${date}.png`
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    URL.revokeObjectURL(url)
+    showToast('✦ 圖卡已下載到本機')
+  }, 'image/png', 1.0)
+}
+
+// Helper: word-wrap text, returns final y position
+function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
+  const chars = text.split('')
+  let line = ''
+  for (let i = 0; i < chars.length; i++) {
+    const testLine = line + chars[i]
+    if (ctx.measureText(testLine).width > maxWidth && line !== '') {
+      ctx.fillText(line, x, y)
+      line = chars[i]
+      y += lineHeight
+    } else {
+      line = testLine
+    }
+  }
+  if (line) { ctx.fillText(line, x, y); y += lineHeight }
+  return y
+}
+
+// Helper: count wrapped lines without drawing
+function measureWrappedLines(ctx, text, maxWidth) {
+  const chars = text.split('')
+  let line = '', lines = 0
+  for (let i = 0; i < chars.length; i++) {
+    const testLine = line + chars[i]
+    if (ctx.measureText(testLine).width > maxWidth && line !== '') {
+      lines++
+      line = chars[i]
+    } else {
+      line = testLine
+    }
+  }
+  if (line) lines++
+  return lines
+}
+
+// Helper: rounded rect
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath()
+  ctx.moveTo(x + r, y)
+  ctx.arcTo(x + w, y, x + w, y + h, r)
+  ctx.arcTo(x + w, y + h, x, y + h, r)
+  ctx.arcTo(x, y + h, x, y, r)
+  ctx.arcTo(x, y, x + w, y, r)
+  ctx.closePath()
+}
+
+function goToShare() {
+  if (!currentCard) return
+  updateSharePage()
+  switchTab('share')
+}
+
+function openClassroomSetup() {
+  buildSetupModal()
+  document.getElementById('setup-modal').classList.add('active')
+}
+
+function buildSetupModal() {
+  const list = document.getElementById('setup-theme-list')
+  list.innerHTML = ''
+  THEME_ORDER.forEach(theme => {
+    const m     = THEME_META[theme]
+    const count = CARDS.filter(c => c.theme === theme && !c.is_premium).length
+    const row   = document.createElement('div')
+    row.className = `setup-theme-row${cmSetupTheme === theme ? ' selected' : ''}`
+    row.id = `setup-row-${theme}`
+    row.innerHTML = `
+      <div style="position:absolute;left:0;top:0;bottom:0;width:3px;background:${m.color}"></div>
+      <div class="setup-emoji-circle" style="background:${m.color}20">${m.emoji}</div>
+      <div class="setup-row-info">
+        <div class="setup-row-name">${m.label}</div>
+        <div class="setup-row-count">${count} 張免費卡片</div>
+      </div>
+      <div class="setup-check">✓</div>`
+    row.onclick = () => {
+      cmSetupTheme = theme
+      document.querySelectorAll('.setup-theme-row').forEach(r => r.classList.remove('selected'))
+      row.classList.add('selected')
+      updateSetupCount()
+    }
+    list.appendChild(row)
+  })
+  updateSetupCount()
+}
+
+function updateSetupCount() {
+  const count = Math.min(5, CARDS.filter(c => c.theme === cmSetupTheme && !c.is_premium).length)
+  document.getElementById('setup-count-info').innerHTML =
+    `本次課堂將顯示 <span class="count-bold">${count} 張</span> 卡片（免費版上限 5 張）`
+}
+
+function toggleShuffle(btn) {
+  cmShuffle = !cmShuffle
+  btn.classList.toggle('on', cmShuffle)
+}
+
+function closeSetupOnBackdrop(e) {
+  if (e.target === document.getElementById('setup-modal'))
+    document.getElementById('setup-modal').classList.remove('active')
+}
+
+function startClassroom() {
+  document.getElementById('setup-modal').classList.remove('active')
+  let pool = CARDS.filter(c => c.theme === cmSetupTheme && !c.is_premium).slice(0,5)
+  if (cmShuffle) {
+    pool = [...pool]
+    for (let i = pool.length-1; i > 0; i--) {
+      const j = Math.floor(Math.random()*(i+1));
+      [pool[i],pool[j]] = [pool[j],pool[i]]
+    }
+  }
+  cmCards = pool; cmIndex = 0; timerSeconds = 0; timerRunning = false
+  clearInterval(timerInterval)
+  document.getElementById('classroom-mode').classList.add('active')
+  document.body.style.overflow = 'hidden'
+  renderCmCard()
+}
+
+function renderCmCard() {
+  if (!cmCards.length) return
+  const card = cmCards[cmIndex]
+  const m    = THEME_META[card.theme]
+  const cardEl = document.getElementById('cm-card')
+  cardEl.style.animation = 'none'; void cardEl.offsetWidth; cardEl.style.animation = ''
+  cardEl.style.boxShadow = `0 0 80px ${m.color}25, inset 0 0 0 0.5px rgba(255,255,255,0.1)`
+  document.getElementById('cm-theme-emoji').textContent = m.emoji
+  document.getElementById('cm-theme-label').textContent = m.label
+  document.getElementById('cm-progress').innerHTML = cmCards.map((_,i) =>
+    `<div class="cm-dot${i<cmIndex?' done':i===cmIndex?' current':''}"></div>`).join('')
+  document.getElementById('cm-card-theme-label').innerHTML = `<span style="color:${m.color}">${m.emoji} ${m.label.toUpperCase()}</span>`
+  document.getElementById('cm-divider').style.background = m.color
+  document.getElementById('cm-card-title-sm').textContent = card.title
+  document.getElementById('cm-quote').textContent = `「${card.quote}」`
+  document.getElementById('cm-reminder').textContent = card.reminder
+  document.getElementById('cm-refl-label').style.color = m.color
+  document.getElementById('cm-refl-text').textContent = card.reflection_question
+  document.getElementById('cm-author').textContent = card.author ? `— ${card.author}` : ''
+  document.getElementById('cm-count').textContent = `${cmIndex+1} / ${cmCards.length}`
+  document.getElementById('cm-prev-btn').disabled = cmIndex === 0
+  document.getElementById('cm-next-btn').textContent = cmIndex === cmCards.length-1 ? '完成 ✓' : '下一張 →'
+  timerSeconds = 0; updateTimerDisplay()
+}
+
+function cmPrev() { if (cmIndex > 0) { cmIndex--; renderCmCard() } }
+function cmNext() {
+  if (cmIndex >= cmCards.length-1) { endClassroom(); showToast('✦ 課堂圓滿結束'); return }
+  cmIndex++; renderCmCard()
+}
+function endClassroom() {
+  clearInterval(timerInterval); timerRunning = false
+  document.getElementById('classroom-mode').classList.remove('active')
+  document.body.style.overflow = ''
+}
+function toggleTimer() {
+  if (timerRunning) {
+    clearInterval(timerInterval); timerRunning = false
+    document.getElementById('cm-timer-btn').classList.remove('running')
+  } else {
+    timerInterval = setInterval(() => { timerSeconds++; updateTimerDisplay() }, 1000)
+    timerRunning = true
+    document.getElementById('cm-timer-btn').classList.add('running')
+  }
+}
+function updateTimerDisplay() {
+  const m = String(Math.floor(timerSeconds/60)).padStart(2,'0')
+  const s = String(timerSeconds%60).padStart(2,'0')
+  document.getElementById('cm-timer-btn').textContent = `⏱ ${m}:${s}`
+}
+let toastTimer = null
+function showToast(msg) {
+  const el = document.getElementById('toast')
+  el.textContent = msg; el.classList.add('show')
+  clearTimeout(toastTimer)
+  toastTimer = setTimeout(() => el.classList.remove('show'), 2400)
+}
+</script></body></html>
